@@ -20,9 +20,9 @@ local function destroy_grab()
     end
 end
 
--- Destroy mobile anticheat function
+-- Destroy mobile lib function
 
-local function destroy_mobile_ac()
+local function destroy_mobile_lib()
     if lib_SPS and lib_SPS:FindFirstChild("ClientAnticheat") and lib_SPS.ClientAnticheat:FindFirstChild("AntiMobileExploits") then
         block_instance(lib_SPS.ClientAnticheat.AntiMobileExploits)
         block_instance(lib_SPS.ClientAnticheat)
@@ -52,7 +52,7 @@ local function init_hook(baad_table, baad_insts, bool_sr)
         end
     end
     destroy_grab()
-    destroy_mobile_ac()
+    destroy_mobile_lib()
 end
 
 -- Runs init_hook how it should in each place

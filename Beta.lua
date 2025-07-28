@@ -56,6 +56,7 @@ local pos_table = {
     Arena = {0, -5, 0},
     Lobby = {-997, 328, -2},
     Safespot = {10000, -45, 10000},
+    Safespot2 = {-10000, -45, -10000},
     Hitman = {17893, -24, -3548},
     Cannon = {264, 34, 199},
     Slapple = {-403, 51, -15},
@@ -138,10 +139,8 @@ end
 
 local function equip(glove)
     if leaderstats:WaitForChild("Glove").Value == glove then return end -- if glove is equipped already, return
-    local use_NIE = false
-    if getgenv().BETA_NIE_INSTANCE then use_NIE = true end
 
-    if use_NIE then
+    if getgenv().BETA_NIE_INSTANCE then
         getgenv().BETA_NIE_INSTANCE:FireServer(glove)
         task.wait(.1)
         if leaderstats:WaitForChild("Glove").Value == glove then
@@ -149,11 +148,8 @@ local function equip(glove)
         else
             use_NIE = false
         end
-    end
-    if not use_NIE then
-        if workspace.Lobby:FindFirstChild(glove) then
-            fireclickdetector(workspace.Lobby[glove]:WaitForChild("ClickDetector"))
-        end
+    else
+        notify("NIE not setup", "Features using NIE won\'t work")
     end
 end
 
@@ -176,27 +172,29 @@ run(function()
     end)
 end)
 
--- Create Safespot
+-- Safespot create function
 
-if workspace:FindFirstChild("Safespot") == nil then
+local function create_safespot(name, bool_bob, posx, posy, posz)
     local Safespot = Instance.new("Part",workspace)
-    Safespot.Name = "Safespot"
-    Safespot.Position = Vector3.new(10000,-50,10000)
+    Safespot.Name = "name"
+    Safespot.Position = Vector3.new(posx,posy,posz)
     Safespot.Size = Vector3.new(5000,10,5000)
     Safespot.Anchored = true
     Safespot.CanCollide = true
     Safespot.Transparency = .5
+    if bool_bob then Safespot.CollisionGroup = "Bobstuff" end
+end
 
-    -- Also create a duplicate so rob doesn't fall through the baseplate :)
+-- Create Safespot
 
-    local Bobspot = Instance.new("Part",workspace)
-    Bobspot.Name = "Bobspot"
-    Bobspot.Position = Vector3.new(10000,-50,10000)
-    Bobspot.Size = Vector3.new(5000,10,5000)
-    Bobspot.Anchored = true
-    Bobspot.CanCollide = true
-    Bobspot.Transparency = .5
-    Bobspot.CollisionGroup = "Bobstuff"
+if workspace:FindFirstChild("Safespot") == nil then
+    run(create_safespot, "Safespot", false, 10000, -50, 10000)
+    run(create_safespot, "Bobspot", true, 10000, -50, 10000) -- Also create a duplicate so rob doesn't fall through the baseplate :)
+end
+
+if workspace:FindFirstChild("Safespot2") == nil then
+    run(create_safespot, "Safespot2", false, -10000, -50, -10000)
+    run(create_safespot, "Bobspot2", true, -10000, -50, -10000) -- Also create a duplicate so rob doesn't fall through the baseplate :)
 end
 
 -- Create Tabs
@@ -381,7 +379,25 @@ divider(Troll)
 local rob_murder = Troll:CreateButton({
     Name = "Molest™",
     Callback = function()
-        -- Empty on purpose
+        local glove_save = leaderstats:WaitForChild("Glove").Value
+        local in_arena = localplayer.Character:WaitForChild("isInArena").Value
+        if in_arena then
+            notify("Not in lobby", "Molest doesn\'t work in arena")
+            return
+        end
+        run(tp, table.unpack(pos_table.Safespot))
+        run(equip, "rob")
+        task.wait(.25)
+        if not leaderstats:WaitForChild("Glove").Value == "rob" then return end
+        rep_storage.rob:FireServer(false)
+        task.wait(2)
+        run(tp, 0, -5, 0)
+        task.wait(.1)
+        run(tp, table.unpack(pos_table.Safespot))
+        task.wait(.1)
+        run(tp, table.unpack(pos_table.Safespot2))
+        task.wait(.1)
+        localplayer:WaitForChild("Reset"):FireServer()
     end,
 })
 
