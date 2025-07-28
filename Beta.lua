@@ -425,6 +425,10 @@ local rob_murder = Troll:CreateButton({
             notify("Target not in lobby", "Molest doesn\'t work when target is in lobby")
             return
         end
+        if not game:GetService("Players")[target_name].Character:FindFirstChild("Humanoid") then
+            notify("Target has no humanoid", "Likely due to using diamond or megarock")
+            return
+        end
         run(tp, table.unpack(pos_table.Safespot)) -- TP to safespot
         run(equip, "rob") -- Equip rob
         task.wait(.05)
@@ -436,6 +440,10 @@ local rob_murder = Troll:CreateButton({
         if not game:GetService("Players")[target_name].Character:WaitForChild("isInArena").Value or game:GetService("Players")[target_name].Character:WaitForChild("Humanoid").Health == 0 then
             notify("Target died", "Target died before rob animation finished")
             localplayer:WaitForChild("Reset"):FireServer()
+            return
+        end
+        if not game:GetService("Players")[target_name].Character:FindFirstChild("Humanoid") then
+            notify("Target has no humanoid", "Likely due to using diamond or megarock")
             return
         end
         local target_root = game:GetService("Players")[target_name].Character:WaitForChild("HumanoidRootPart")
