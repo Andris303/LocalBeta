@@ -256,7 +256,7 @@ local TP_dropdown = Main:CreateDropdown({
 -- lol
 
 function reset_TP_dropdown()
-    TP_dropdown:Set({""})
+    TP_dropdown:Set({"None"})
 end
 
 -- Toggle death barriers
