@@ -427,10 +427,15 @@ local rob_murder = Troll:CreateButton({
         rep_storage.rob:FireServer(false) -- Use ability
         task.wait(.05)
         run(equip, glove_save) -- Change back to previous glove
-        task.wait(2.45) -- Wait until animation finishes
+        task.wait(2.95) -- Wait until animation finishes
+        print(string.match(playerlist_dropdown.CurrentOption[1], "(.+)%s(.+)"))
         local _unused, target_name = string.match(playerlist_dropdown.CurrentOption[1], "(.+)%s(.+)")
+        print(_unused, target_name)
+        print(target_name)
+        print(game:GetService("Players")[target_name].Name)
         local target_root = game:GetService("Players")[target_name].Character:WaitForChild("HumanoidRootPart")
         local target_position = {target_root.Position.X, target_root.Position.Y, target_root.Position.Z}
+        print(table.unpack(target_position))
         run(tp, table.unpack(target_position)) -- Teleports to target's position
         task.wait(.1)
         run(tp, table.unpack(pos_table.Safespot)) -- TP back to safespot
