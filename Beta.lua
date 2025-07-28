@@ -432,7 +432,7 @@ local rob_murder = Troll:CreateButton({
         rep_storage.rob:FireServer(false) -- Use ability
         task.wait(.05)
         run(equip, glove_save) -- Change back to previous glove
-        task.wait(3.35) -- Wait until animation finishes
+        task.wait(3.3) -- Wait until animation finishes
         if not game:GetService("Players")[target_name].Character:WaitForChild("isInArena").Value or game:GetService("Players")[target_name].Character:WaitForChild("Humanoid").Health == 0 then
             notify("Target died", "Target died before rob animation finished")
             return
@@ -440,7 +440,7 @@ local rob_murder = Troll:CreateButton({
         local target_root = game:GetService("Players")[target_name].Character:WaitForChild("HumanoidRootPart")
         local target_position = {target_root.Position.X, target_root.Position.Y, target_root.Position.Z}
         run(tp, table.unpack(target_position)) -- Teleports to target's position
-        task.wait(.1)
+        task.wait(.2)
         run(tp, table.unpack(pos_table.Safespot)) -- TP back to safespot
         task.wait(.1)
         run(tp, table.unpack(pos_table.Safespot2)) -- TP to safespot2 to avoid suspicion
