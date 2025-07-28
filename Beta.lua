@@ -400,6 +400,10 @@ local function update_playerlist()
     playerlist_dropdown:Refresh(playerlist_table)
 end
 
+-- Initialize playerlist
+
+run(update_playerlist)
+
 -- Watch for change in playerlist
 
 game:GetService("Players").ChildAdded:Connect(function(_unused) run(update_playerlist) end)
@@ -423,7 +427,7 @@ local rob_murder = Troll:CreateButton({
         rep_storage.rob:FireServer(false) -- Use ability
         task.wait(.05)
         run(equip, glove_save) -- Change back to previous glove
-        task.wait(3) -- Wait until animation finishes
+        task.wait(3.25) -- Wait until animation finishes
         local _unused, target_name = string.match(playerlist_dropdown.CurrentOption[1], "(.+)%s%((.+)%)")
         local target_root = game:GetService("Players")[target_name].Character:WaitForChild("HumanoidRootPart")
         local target_position = {target_root.Position.X, target_root.Position.Y, target_root.Position.Z}
