@@ -433,7 +433,7 @@ local rob_murder = Troll:CreateButton({
         task.wait(.05)
         run(equip, glove_save) -- Change back to previous glove
         task.wait(3.35) -- Wait until animation finishes
-        if not game:GetService("Players")[target_name].Character:WaitForChild("isInArena").Value or game:GetService("Players")[target_name].Character:WaitForChild("HumanoidRootPart").Health == 0 then
+        if not game:GetService("Players")[target_name].Character:WaitForChild("isInArena").Value or game:GetService("Players")[target_name].Character:WaitForChild("Humanoid").Health == 0 then
             notify("Target died", "Target died before rob animation finished")
             return
         end
