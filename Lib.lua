@@ -1,109 +1,64 @@
--- Not Mine!
+-- Block instance function
 
-local RequireService = cloneref or function(clone) return clone end
-local BlockInstance = function(ez) ez.Name = "BlockedInstance_"..math.random(0,500000).."" ez.Parent = RequireService(game:GetService("LogService")) ez:Destroy() end
-
-local game = game or Ugc
-local Players = RequireService(game:GetService("Players"))
-local Player = Players.LocalPlayer
-local PlayerScripts = Player:WaitForChild("PlayerScripts")
-local StarterPlayer = RequireService(game:GetService("StarterPlayer"))
-local StarterPlayerScripts = StarterPlayer:WaitForChild("StarterPlayerScripts")
-local ReplicatedStorage = RequireService(game:GetService("ReplicatedStorage"))
-local ReplicatedFirst = RequireService(game:GetService("ReplicatedFirst"))
-
-local function DestroyGrabLocalScript()
-if ReplicatedFirst and ReplicatedFirst:FindFirstChild("Client") and ReplicatedFirst.Client:FindFirstChild("GrabLocal") then
-BlockInstance(game.ReplicatedFirst.Client.GrabLocal)
-end
+local function block_instance(inst)
+    inst.Name = "BlockedInstance_"..math.random(0,500000)
+    inst.Parent = game:GetService("LogService")
+    inst:Destroy()
 end
 
-local function BypassMobileClientAntiCheat()
-if StarterPlayerScripts and StarterPlayerScripts:FindFirstChild("ClientAnticheat") and StarterPlayerScripts.ClientAnticheat:FindFirstChild("AntiMobileExploits") then
-BlockInstance(StarterPlayerScripts.ClientAnticheat.AntiMobileExploits)
-BlockInstance(StarterPlayerScripts.ClientAnticheat)
-end
+-- Locals
+
+local lib_SPS = game:GetService("StarterPlayer"):WaitForChild("StarterPlayerScripts")
+local lib_RS = game:GetService("ReplicatedStorage")
+local lib_RF = game:GetService("ReplicatedFirst")
+
+-- Destroy grab function
+
+local function destroy_grab()
+    if lib_RF and lib_RF:FindFirstChild("Client") and lib_RF.Client:FindFirstChild("GrabLocal") then
+        block_instance(lib_RF.Client.GrabLocal)
+    end
 end
 
+-- Destroy mobile anticheat function
 
-if game.PlaceId == 9431156611 then -- Slap Royale
-if hookmetamethod and getnamecallmethod then
-local Namecall
-Namecall = hookmetamethod(game, "__namecall", function(self, ...)
-   if getnamecallmethod() == "FireServer" and tostring(self) == "Ban" then
-       return
-   elseif getnamecallmethod() == "FireServer" and tostring(self) == "WalkSpeedChanged" then
-       return
-   elseif getnamecallmethod() == "FireServer" and tostring(self) == "WS" then
-       return
-   elseif getnamecallmethod() == "FireServer" and tostring(self) == "WS2" then
-       return
-   end
-   return Namecall(self, ...)
-end)
-else
-local AmountOfBlockedRemotes = 0
-if game:GetService("ReplicatedStorage").Events:FindFirstChild("Ban") then
-BlockInstance(game:GetService("ReplicatedStorage").Events.Ban)
-AmountOfBlockedRemotes = AmountOfBlockedRemotes + 1
+local function destroy_mobile_ac()
+    if lib_SPS and lib_SPS:FindFirstChild("ClientAnticheat") and lib_SPS.ClientAnticheat:FindFirstChild("AntiMobileExploits") then
+        block_instance(lib_SPS.ClientAnticheat.AntiMobileExploits)
+        block_instance(lib_SPS.ClientAnticheat)
+    end
 end
-if game:GetService("ReplicatedStorage").Events:FindFirstChild("WS") then
-BlockInstance(game:GetService("ReplicatedStorage").Events.WS)
-AmountOfBlockedRemotes = AmountOfBlockedRemotes + 1
-end
-if game:GetService("ReplicatedStorage").Events:FindFirstChild("AdminGUI") then
-BlockInstance(game:GetService("ReplicatedStorage").Events.AdminGUI)
-AmountOfBlockedRemotes = AmountOfBlockedRemotes + 1
-end
-if game:GetService("ReplicatedStorage").Events:FindFirstChild("WS2") then
-BlockInstance(game:GetService("ReplicatedStorage").Events["WS2"])
-AmountOfBlockedRemotes = AmountOfBlockedRemotes + 1
-end
-end
-DestroyGrabLocalScript()
-BypassMobileClientAntiCheat()
 
+-- Hook 'n' block™ function
 
+local function init_hook(baad_table, baad_insts, bool_sr)
+    if hookmetamethod and getnamecallmethod then
+        local Namecall
+        Namecall = hookmetamethod(game, "__namecall", function(self, ...)
+            local t = tostring(self)
+            if bool_sr then
+                if getnamecallmethod() == "FireServer" and (t == "Ban" or t == "WalkSpeedChanged" or t == "WS" or t == "WS2") then return end
+            else
+                if getnamecallmethod() == "FireServer" and (t == "Ban" or t == "WalkSpeedChanged" or t == "AdminGUI" or t == "GRAB" or t == "SpecialGloveAccess") then return end
+            end
+            return Namecall(self, ...)
+        end)
+    else
+        local events = lib_RS.Events
+        for _, inst in pairs(baad_table) do
+            if baad_insts:FindFirstChild(inst) then
+                block_instance(baad_insts[inst])
+            end
+        end
+    end
+    destroy_grab()
+    destroy_mobile_ac()
+end
+
+-- Runs init_hook how it should in each place
+
+if game.PlaceId == 9431156611 then
+    init_hook({"Ban", "WS", "AdminGUI", "WS2"}, lib_RS.Events, true)
 elseif game.PlaceId == 11520107397 or game.PlaceId == 9015014224 or game.PlaceId == 6403373529 or game.PlaceId == 124596094333302 then
-if hookmetamethod and getnamecallmethod then
-local Namecall
-Namecall = hookmetamethod(game, "__namecall", function(self, ...)
-   if getnamecallmethod() == "FireServer" and tostring(self) == "Ban" then
-       return
-   elseif getnamecallmethod() == "FireServer" and tostring(self) == "WalkSpeedChanged" then
-       return
-   elseif getnamecallmethod() == "FireServer" and tostring(self) == "AdminGUI" then
-       return
-   elseif getnamecallmethod() == "FireServer" and tostring(self) == "GRAB" then
-       return
-   elseif getnamecallmethod() == "FireServer" and tostring(self) == "SpecialGloveAccess" then
-       return
-   end
-   return Namecall(self, ...)
-end)
-else
-local AmountOfBlockedRemotes = 0
-if game:GetService("ReplicatedStorage"):FindFirstChild("Ban") then
-BlockInstance(game:GetService("ReplicatedStorage").Ban)
-AmountOfBlockedRemotes = AmountOfBlockedRemotes + 1
-end
-if game:GetService("ReplicatedStorage"):FindFirstChild("WalkSpeedChanged") then
-BlockInstance(game:GetService("ReplicatedStorage").WalkSpeedChanged)
-AmountOfBlockedRemotes = AmountOfBlockedRemotes + 1
-end
-if game:GetService("ReplicatedStorage"):FindFirstChild("AdminGUI") then
-BlockInstance(game:GetService("ReplicatedStorage").AdminGUI)
-AmountOfBlockedRemotes = AmountOfBlockedRemotes + 1
-end
-if game:GetService("ReplicatedStorage"):FindFirstChild("GRAB") then
-BlockInstance(game:GetService("ReplicatedStorage").GRAB)
-AmountOfBlockedRemotes = AmountOfBlockedRemotes + 1
-end
-if game:GetService("ReplicatedStorage"):FindFirstChild("SpecialGloveAccess") then
-BlockInstance(game:GetService("ReplicatedStorage").SpecialGloveAccess)
-AmountOfBlockedRemotes = AmountOfBlockedRemotes + 1
-end
-end
-DestroyGrabLocalScript()
-BypassMobileClientAntiCheat()
+    init_hook({"Ban", "WalkSpeedChanged", "AdminGUI", "GRAB", "SpecialGloveAccess"}, lib_RS, false)
 end
