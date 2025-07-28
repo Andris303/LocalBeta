@@ -421,7 +421,7 @@ local rob_murder = Troll:CreateButton({
             return
         end
         local _unused, target_name = string.match(playerlist_dropdown.CurrentOption[1], "(.+)%s%((.+)%)")
-        if not target_name.Character:WaitForChild("isInArena").Value then
+        if not game:GetService("Players")[target_name].Character:WaitForChild("isInArena").Value then
             notify("Target not in lobby", "Molest doesn\'t work when target is in lobby")
             return
         end
