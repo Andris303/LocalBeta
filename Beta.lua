@@ -420,6 +420,11 @@ local rob_murder = Troll:CreateButton({
             notify("Not in lobby", "Molest doesn\'t work in arena")
             return
         end
+        local _unused, target_name = string.match(playerlist_dropdown.CurrentOption[1], "(.+)%s%((.+)%)")
+        if not target_name.Character:WaitForChild("isInArena").Value then
+            notify("Target not in lobby", "Molest doesn\'t work when target is in lobby")
+            return
+        end
         run(tp, table.unpack(pos_table.Safespot)) -- TP to safespot
         run(equip, "rob") -- Equip rob
         task.wait(.05)
@@ -427,8 +432,11 @@ local rob_murder = Troll:CreateButton({
         rep_storage.rob:FireServer(false) -- Use ability
         task.wait(.05)
         run(equip, glove_save) -- Change back to previous glove
-        task.wait(3.25) -- Wait until animation finishes
-        local _unused, target_name = string.match(playerlist_dropdown.CurrentOption[1], "(.+)%s%((.+)%)")
+        task.wait(3.45) -- Wait until animation finishes
+        if not target_name.Character:WaitForChild("isInArena").Value or target_name.Character:WaitForChild("HumanoidRootPart").Health == 0 then
+            notify("Target died", "Target died before rob animation finished")
+            return
+        end
         local target_root = game:GetService("Players")[target_name].Character:WaitForChild("HumanoidRootPart")
         local target_position = {target_root.Position.X, target_root.Position.Y, target_root.Position.Z}
         run(tp, table.unpack(target_position)) -- Teleports to target's position
