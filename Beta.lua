@@ -462,7 +462,7 @@ divider(Troll)
 
 divider(Test)
 
-local rob_timing = Test:CreateButton({
+local placeholder = Test:CreateButton({
     Name = "placeholder",
     Callback = function()
         -- Empty
