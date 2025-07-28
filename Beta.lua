@@ -110,11 +110,7 @@ local function setup_NIE()
 
     local network_folder = rep_storage:WaitForChild("_NETWORK")
     local current_glove = leaderstats:WaitForChild("Glove").Value
-    local glove_to_equip
-
-    if current_glove == "Default" then glove_to_equip = "spin" -- Sets up which gloves it should test NIE on
-    else glove_to_equip = "Default" 
-    end
+    local glove_to_equip = "bus"
 
     for _, inst in pairs(network_folder:GetChildren()) do
         if string.match(inst.Name, "{") then -- checks if instance is a network instance
@@ -427,15 +423,10 @@ local rob_murder = Troll:CreateButton({
         rep_storage.rob:FireServer(false) -- Use ability
         task.wait(.05)
         run(equip, glove_save) -- Change back to previous glove
-        task.wait(2.95) -- Wait until animation finishes
-        print(string.match(playerlist_dropdown.CurrentOption[1], "(.+)%s(.+)"))
-        local _unused, target_name = string.match(playerlist_dropdown.CurrentOption[1], "(.+)%s(.+)")
-        print(_unused, target_name)
-        print(target_name)
-        print(game:GetService("Players")[target_name].Name)
+        task.wait(3) -- Wait until animation finishes
+        local _unused, target_name = string.match(playerlist_dropdown.CurrentOption[1], "(.+)%s%((.+)%)")
         local target_root = game:GetService("Players")[target_name].Character:WaitForChild("HumanoidRootPart")
         local target_position = {target_root.Position.X, target_root.Position.Y, target_root.Position.Z}
-        print(table.unpack(target_position))
         run(tp, table.unpack(target_position)) -- Teleports to target's position
         task.wait(.1)
         run(tp, table.unpack(pos_table.Safespot)) -- TP back to safespot
