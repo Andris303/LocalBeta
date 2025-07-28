@@ -244,7 +244,7 @@ local TP_dropdown = Main:CreateDropdown({
     CurrentOption = {},
     MultipleOptions = false,
     Callback = function(Options)
-        run(tp, table.unpack(pos_table[Options]))
+        run(tp, table.unpack(pos_table[Options[1]]))
         run(reset_TP_dropdown)
     end,
 })
