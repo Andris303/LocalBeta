@@ -244,13 +244,7 @@ local TP_dropdown = Main:CreateDropdown({
     CurrentOption = {},
     MultipleOptions = false,
     Callback = function(Options)
-        print(pos_table.Arena)
-        print(table.unpack(pos_table.Arena))
-        print(pos_table["Arena"])
-        print(table.unpack(pos_table["Arena"]))
-        print(Options[1])
-        print(pos_table[Options[1]])
-        print(table.unpack(pos_table[Options[1]]))
+        if Options[1] == "None" then return end
         run(tp, table.unpack(pos_table[Options[1]]))
         run(reset_TP_dropdown)
     end,
