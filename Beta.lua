@@ -205,6 +205,8 @@ local Gloves = Window:CreateTab("Gloves")
 
 local Troll = Window:CreateTab("Troll")
 
+local Test = Window:CreateTab("Test")
+
 -- Create elements in tabs
 
 -- Main
@@ -334,7 +336,7 @@ auto_click = Gloves:CreateToggle({
     end,
 })
 
--- auto destroy tycoons toggle
+-- Auto destroy tycoons toggle
 
 auto_destroy = Gloves:CreateToggle({
     Name = "Auto destroy tycoons",
@@ -348,7 +350,7 @@ auto_destroy = Gloves:CreateToggle({
     end,
 })
 
--- function to find tycoons to click
+-- Function to find tycoons to click
 
 local function find_tycoons()
     workspace.ChildAdded:Connect(function(child)
@@ -366,7 +368,7 @@ local function find_tycoons()
     end)
 end
 
--- initialize find tycoons
+-- Initialize find tycoons
 
 run(find_tycoons)
 
@@ -375,6 +377,37 @@ divider(Gloves)
 -- Troll
 
 divider(Troll)
+
+-- Dynamic playerlist
+
+local playerlist_dropdown = Troll:CreateDropdown({
+    Name = "Select player",
+    Options = {"Loading..."},
+    CurrentOption = {},
+    MultipleOptions = false,
+    Callback = function(Options)
+        -- Empty
+    end,
+})
+
+-- Function to update playerlist
+
+local function update_playerlist()
+    local playerlist_table = {}
+    local table_counter = 1
+    for _, inst in pairs(game:GetService("Players"):GetChildren()) do
+        playerlist_table[table_counter] = inst.DisplayName .. " (" .. inst.Name .. ")"
+        table_counter = table_counter + 1
+    end
+    playerlist_dropdown:Refresh(playerlist_table)
+end
+
+-- Watch for change in playerlist
+
+game:GetService("Players").ChildAdded:Connect(update_playerlist(_unused))
+game:GetService("Players").ChildRemoved:Connect(update_playerlist(_unused))
+
+-- Molest :P
 
 local rob_murder = Troll:CreateButton({
     Name = "Molest™",
@@ -385,20 +418,47 @@ local rob_murder = Troll:CreateButton({
             notify("Not in lobby", "Molest doesn\'t work in arena")
             return
         end
-        run(tp, table.unpack(pos_table.Safespot))
-        run(equip, "rob")
+        run(tp, table.unpack(pos_table.Safespot)) -- TP to safespot
+        run(equip, "rob") -- Equip rob
         task.wait(.25)
-        if not leaderstats:WaitForChild("Glove").Value == "rob" then return end
-        rep_storage.rob:FireServer(false)
-        task.wait(2)
-        run(tp, 0, -5, 0)
+        if not leaderstats:WaitForChild("Glove").Value == "rob" then return end -- If equip failed then return
+        rep_storage.rob:FireServer(false) -- Use ability
+        task.wait(.25)
+        run(equip, glove_save) -- Change back to previous glove
+        task.wait(2.25) -- Wait until animation finishes
+        local _unused, target_name = string.match(playerlist_dropdown.CurrentOption[1], "(.+)%s(.+)")
+        local target_root = game:GetService("Players")[target_name].Character:WaitForChild("HumanoidRootPart")
+        local target_position = {target_root.Position.X, target_root.Position.Y, target_root.Position.Z}
+        run(tp, table.unpack(target_position)) -- Teleports to target's position
         task.wait(.1)
-        run(tp, table.unpack(pos_table.Safespot))
+        run(tp, table.unpack(pos_table.Safespot)) -- TP back to safespot
         task.wait(.1)
-        run(tp, table.unpack(pos_table.Safespot2))
+        run(tp, table.unpack(pos_table.Safespot2)) -- TP to safespot2 to avoid suspicion
         task.wait(.1)
-        localplayer:WaitForChild("Reset"):FireServer()
+        localplayer:WaitForChild("Reset"):FireServer() -- Reset
     end,
 })
 
 divider(Troll)
+
+divider(Test)
+
+local rob_timing = Test:CreateButton({
+    Name = "Test rob equip / ability timings",
+    Callback = function()
+        local glove_save = leaderstats:WaitForChild("Glove").Value
+        local in_arena = localplayer.Character:WaitForChild("isInArena").Value
+        if in_arena then
+            notify("Not in lobby", "Test timing doesn\'t work in arena")
+            return
+        end
+        run(tp, table.unpack(pos_table.Safespot))
+        run(equip, "rob")
+        task.wait(.05)
+        rep_storage.rob:FireServer(false)
+        task.wait(.05)
+        run(equip, glove_save)
+    end,
+})
+
+divider(Test)
