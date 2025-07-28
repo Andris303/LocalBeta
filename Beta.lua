@@ -52,6 +52,14 @@ local Window = Rayfield:CreateWindow({
 local localplayer = game:GetService("Players").LocalPlayer
 local leaderstats = localplayer:WaitForChild("leaderstats")
 local rep_storage = game:GetService("ReplicatedStorage")
+local pos_table = {
+    Arena = {0, -5, 0},
+    Lobby = {-997, 328, -2},
+    Safespot = {10000, -45, 10000},
+    Hitman = {17893, -24, -3548},
+    Cannon = {264, 34, 199},
+    Slapple = {-403, 51, -15},
+}
 
 -- Runs functions on a different thread
 
@@ -232,23 +240,11 @@ local reset_TP_dropdown
 
 local TP_dropdown = Main:CreateDropdown({
     Name = "Teleport",
-    Options = {"Arena","Lobby","Safespot","Hitman Safespot","Cannon Island","Slapple Island"},
+    Options = {"Arena","Lobby","Safespot","Hitman","Cannon","Slapple"},
     CurrentOption = {},
     MultipleOptions = false,
     Callback = function(Options)
-        if Options[1] == "Arena" then
-            run(tp, 0, -5, 0)
-        elseif Options[1] == "Lobby" then
-            run(tp, -997, 328, -2)
-        elseif Options[1] == "Safespot" then
-            run(tp, 10000, -45, 10000)
-        elseif Options[1] == "Hitman Safespot" then
-            run(tp, 17893, -24, -3548)
-        elseif Options[1] == "Cannon Island" then
-            run(tp, 264, 34, 199)
-        elseif Options[1] == "Slapple Island" then
-            run(tp, -403, 51, -15)
-        end
+        run(tp, table.unpack(pos_table[Options]))
         run(reset_TP_dropdown)
     end,
 })
@@ -381,8 +377,8 @@ divider(Gloves)
 
 divider(Troll)
 
-local troll_placeholder = Troll:CreateButton({
-    Name = "Placeholder",
+local rob_murder = Troll:CreateButton({
+    Name = "Molest™",
     Callback = function()
         -- Empty on purpose
     end,
