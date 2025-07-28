@@ -396,16 +396,18 @@ local function update_playerlist()
     local playerlist_table = {}
     local table_counter = 1
     for _, inst in pairs(game:GetService("Players"):GetChildren()) do
-        playerlist_table[table_counter] = inst.DisplayName .. " (" .. inst.Name .. ")"
-        table_counter = table_counter + 1
+        if inst.Name ~= localplayer.Name then
+            playerlist_table[table_counter] = inst.DisplayName .. " (" .. inst.Name .. ")"
+            table_counter = table_counter + 1
+        end
     end
     playerlist_dropdown:Refresh(playerlist_table)
 end
 
 -- Watch for change in playerlist
 
-game:GetService("Players").ChildAdded:Connect(update_playerlist(_unused))
-game:GetService("Players").ChildRemoved:Connect(update_playerlist(_unused))
+game:GetService("Players").ChildAdded:Connect(function(_unused) run(update_playerlist) end)
+game:GetService("Players").ChildRemoved:Connect(function(_unused) run(update_playerlist) end)
 
 -- Molest :P
 
@@ -420,12 +422,12 @@ local rob_murder = Troll:CreateButton({
         end
         run(tp, table.unpack(pos_table.Safespot)) -- TP to safespot
         run(equip, "rob") -- Equip rob
-        task.wait(.25)
+        task.wait(.05)
         if not leaderstats:WaitForChild("Glove").Value == "rob" then return end -- If equip failed then return
         rep_storage.rob:FireServer(false) -- Use ability
-        task.wait(.25)
+        task.wait(.05)
         run(equip, glove_save) -- Change back to previous glove
-        task.wait(2.25) -- Wait until animation finishes
+        task.wait(2.45) -- Wait until animation finishes
         local _unused, target_name = string.match(playerlist_dropdown.CurrentOption[1], "(.+)%s(.+)")
         local target_root = game:GetService("Players")[target_name].Character:WaitForChild("HumanoidRootPart")
         local target_position = {target_root.Position.X, target_root.Position.Y, target_root.Position.Z}
@@ -444,20 +446,9 @@ divider(Troll)
 divider(Test)
 
 local rob_timing = Test:CreateButton({
-    Name = "Test rob equip / ability timings",
+    Name = "placeholder",
     Callback = function()
-        local glove_save = leaderstats:WaitForChild("Glove").Value
-        local in_arena = localplayer.Character:WaitForChild("isInArena").Value
-        if in_arena then
-            notify("Not in lobby", "Test timing doesn\'t work in arena")
-            return
-        end
-        run(tp, table.unpack(pos_table.Safespot))
-        run(equip, "rob")
-        task.wait(.05)
-        rep_storage.rob:FireServer(false)
-        task.wait(.05)
-        run(equip, glove_save)
+        -- Empty
     end,
 })
 
