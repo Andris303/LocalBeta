@@ -141,7 +141,7 @@ end
 local function equip(glove)
     if localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value == glove then return end -- if glove is equipped already, return
 
-    if getgenv().BETA_NIE_INSTANCE then
+    if getgenv().BETA_NIE_INSTANCE and not bool_use_clickdetector then
         getgenv().BETA_NIE_INSTANCE:FireServer(glove)
         task.wait(.1)
         if localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value == glove then
