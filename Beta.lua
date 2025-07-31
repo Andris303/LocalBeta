@@ -483,7 +483,7 @@ use_clickdetector = Advanced:CreateToggle({
     Name = "Use fireclickdetector for equip",
     CurrentValue = false,
     Callback = function(Value)
-        local bool_use_clickdetector = Value
+        bool_use_clickdetector = Value
     end,
 })
 
