@@ -1,5 +1,10 @@
 -- Beta | Slap Battles Hub
 
+-- Check if hub has been loaded already
+
+getgenv().BETA_INSTANCE_NUMBER = "BETA_" .. math.random(1000000, 9999999)
+local current_instance_number = getgenv().BETA_INSTANCE_NUMBER
+
 -- Load Lib
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Andris303/LocalBeta/refs/heads/main/Lib.lua",true))()
@@ -49,8 +54,8 @@ local Window = Rayfield:CreateWindow({
 
 -- Locals
 
+local bool_use_clickdetector = false
 local localplayer = game:GetService("Players").LocalPlayer
-local leaderstats = localplayer:WaitForChild("leaderstats")
 local rep_storage = game:GetService("ReplicatedStorage")
 local pos_table = {
     Arena = {0, -5, 0},
@@ -72,7 +77,7 @@ end
 
 local function tp(x, y, z)
     if localplayer.Character:FindFirstChild("HumanoidRootPart") then -- if root is present
-        local root = localplayer.Character:WaitForChild("HumanoidRootPart")
+        local root = localplayer.Character.HumanoidRootPart
         root.Anchored = true
         root.CFrame = CFrame.new(x, y, z)
         task.wait(.1)
@@ -108,15 +113,15 @@ local function setup_NIE()
     workspace.Lobby.Teleport1.Parent = rep_storage
     workspace.Lobby.Teleport2.Parent = rep_storage
 
-    local network_folder = rep_storage:WaitForChild("_NETWORK")
-    local current_glove = leaderstats:WaitForChild("Glove").Value
+    local network_folder = rep_storage["_NETWORK"]
+    local current_glove = localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value
     local glove_to_equip = "bus"
 
     for _, inst in pairs(network_folder:GetChildren()) do
         if string.match(inst.Name, "{") then -- checks if instance is a network instance
             inst:FireServer(glove_to_equip)
             task.wait(.3)
-            if leaderstats:WaitForChild("Glove").Value == glove_to_equip then
+            if localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value == glove_to_equip then
                 getgenv().BETA_NIE_INSTANCE = inst
                 rep_storage.Teleport1.Parent = workspace.Lobby
                 rep_storage.Teleport2.Parent = workspace.Lobby
@@ -134,16 +139,18 @@ end
 -- Main equip function, if fails to equip, then returns
 
 local function equip(glove)
-    if leaderstats:WaitForChild("Glove").Value == glove then return end -- if glove is equipped already, return
+    if localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value == glove then return end -- if glove is equipped already, return
 
     if getgenv().BETA_NIE_INSTANCE then
         getgenv().BETA_NIE_INSTANCE:FireServer(glove)
         task.wait(.1)
-        if leaderstats:WaitForChild("Glove").Value == glove then
+        if localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value == glove then
             return
         else
             use_NIE = false
         end
+    elseif bool_use_clickdetector then
+        fireclickdetector(workspace.Lobby:FindFirstChild(glove).ClickDetector)
     else
         notify("NIE not setup", "Features using NIE won\'t work")
     end
@@ -152,16 +159,17 @@ end
 -- Initialize setup_NIE()
 
 run(function()
-    if not localplayer.Character:WaitForChild("isInArena").Value or getgenv().BETA_NIE_INSTANCE then
+    if not localplayer.Character.isInArena.Value or getgenv().BETA_NIE_INSTANCE then
         run(setup_NIE)
         return
     end
     notify("NIE setup halted", "NIE setup will be halted until you are in the lobby")
     workspace.ChildAdded:Connect(function(child)
+        if current_instance_number ~= getgenv().BETA_INSTANCE_NUMBER then return end
         task.wait()
         if child.Name == localplayer.Name then
             repeat task.wait()
-            until localplayer.Character:WaitForChild("isInArena").Value == false
+            until localplayer.Character.isInArena.Value == false
             run(setup_NIE)
             return
         end
@@ -201,7 +209,7 @@ local Gloves = Window:CreateTab("Gloves")
 
 local Troll = Window:CreateTab("Troll")
 
-local Test = Window:CreateTab("Test")
+local Advanced = Window:CreateTab("Advanced")
 
 -- Create elements in tabs
 
@@ -291,7 +299,7 @@ function auto_click_tycoon(inst)
 
     if not inst:FindFirstChild("Click") or not auto_click.CurrentValue then return end
 
-    local clicky = inst:WaitForChild("Click"):WaitForChild("ClickDetector")
+    local clicky = inst.Click:WaitForChild("ClickDetector")
 
     while true do
         task.wait()
@@ -307,8 +315,8 @@ function destroy_tycoon(inst)
 
     if not inst:FindFirstChild("Destruct") or not auto_destroy.CurrentValue then return end
 
-    local destructy = inst:WaitForChild("Destruct"):WaitForChild("ClickDetector")
-    local counter = inst:WaitForChild("Counter"):WaitForChild("Part"):WaitForChild("SurfaceGui"):WaitForChild("TextLabel")
+    local destructy = inst.Destruct:WaitForChild("ClickDetector")
+    local counter = inst.Counter.Part.SurfaceGui.TextLabel
 
     if tonumber(counter.Text) < 499 then
         fireclickdetector(destructy)
@@ -316,7 +324,7 @@ function destroy_tycoon(inst)
         repeat
             task.wait()
             fireclickdetector(destructy)
-        until inst:WaitForChild("SDCounter"):WaitForChild("Counter"):WaitForChild("SurfaceGui"):WaitForChild("TextLabel").Text == "100"
+        until inst.SDCounter.Counter.SurfaceGui.TextLabel.Text == "100"
     end
 end
 
@@ -350,6 +358,7 @@ auto_destroy = Gloves:CreateToggle({
 
 local function find_tycoons()
     workspace.ChildAdded:Connect(function(child)
+        if current_instance_number ~= getgenv().BETA_INSTANCE_NUMBER then return end
         task.wait(.1)
         if child.Name == "\195\133Tycoon" .. localplayer.Name then
             if auto_click.CurrentValue then
@@ -406,16 +415,22 @@ run(update_playerlist)
 
 -- Watch for change in playerlist
 
-game:GetService("Players").ChildAdded:Connect(function(_unused) run(update_playerlist) end)
-game:GetService("Players").ChildRemoved:Connect(function(_unused) run(update_playerlist) end)
+game:GetService("Players").ChildAdded:Connect(function(_unused)
+    if current_instance_number ~= getgenv().BETA_INSTANCE_NUMBER then return end
+    run(update_playerlist)
+end)
+game:GetService("Players").ChildRemoved:Connect(function(_unused)
+    if current_instance_number ~= getgenv().BETA_INSTANCE_NUMBER then return end
+    run(update_playerlist)
+end)
 
 -- Molest :P
 
 local rob_murder = Troll:CreateButton({
     Name = "Molest™",
     Callback = function()
-        local glove_save = leaderstats:WaitForChild("Glove").Value
-        local in_arena = localplayer.Character:WaitForChild("isInArena").Value
+        local glove_save = localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value
+        local in_arena = localplayer.Character.isInArena.Value
         if in_arena then
             notify("Not in lobby", "Molest doesn\'t work in arena")
             return
@@ -432,21 +447,21 @@ local rob_murder = Troll:CreateButton({
         run(tp, table.unpack(pos_table.Safespot)) -- TP to safespot
         run(equip, "rob") -- Equip rob
         task.wait(.05)
-        if not leaderstats:WaitForChild("Glove").Value == "rob" then return end -- If equip failed then return
+        if not localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value == "rob" then return end -- If equip failed then return
         rep_storage.rob:FireServer(false) -- Use ability
         task.wait(.05)
         run(equip, glove_save) -- Change back to previous glove
         task.wait(3.5) -- Wait until animation finishes
-        if not game:GetService("Players")[target_name].Character:WaitForChild("isInArena").Value or game:GetService("Players")[target_name].Character:WaitForChild("Humanoid").Health == 0 then
+        if not game:GetService("Players")[target_name].Character.isInArena.Value or game:GetService("Players")[target_name].Character:WaitForChild("Humanoid").Health == 0 then
             notify("Target died", "Target died before rob animation finished")
-            localplayer:WaitForChild("Reset"):FireServer()
+            localplayer.Reset:FireServer()
             return
         end
         if not game:GetService("Players")[target_name].Character:FindFirstChild("Humanoid") then
             notify("Target has no humanoid", "Likely due to using diamond or megarock")
             return
         end
-        local target_root = game:GetService("Players")[target_name].Character:WaitForChild("HumanoidRootPart")
+        local target_root = game:GetService("Players")[target_name].Character.HumanoidRootPart
         local target_position = {target_root.Position.X, target_root.Position.Y, target_root.Position.Z}
         run(tp, table.unpack(target_position)) -- Teleports to target's position
         task.wait(.2)
@@ -454,19 +469,22 @@ local rob_murder = Troll:CreateButton({
         task.wait(.3)
         run(tp, table.unpack(pos_table.Safespot2)) -- TP to safespot2 to avoid suspicion
         task.wait(.3)
-        localplayer:WaitForChild("Reset"):FireServer() -- Reset
+        localplayer.Reset:FireServer() -- Reset
     end,
 })
 
 divider(Troll)
 
-divider(Test)
+divider(Advanced)
 
-local placeholder = Test:CreateButton({
-    Name = "placeholder",
-    Callback = function()
-        -- Empty
+-- Use fireclickdetector for equip functions
+
+use_clickdetector = Advanced:CreateToggle({
+    Name = "Use fireclickdetector for equip",
+    CurrentValue = false,
+    Callback = function(Value)
+        local bool_use_clickdetector = Value
     end,
 })
 
-divider(Test)
+divider(Advanced)
