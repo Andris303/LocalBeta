@@ -161,6 +161,12 @@ end
 run(function()
     if not localplayer.Character.isInArena.Value or getgenv().BETA_NIE_INSTANCE then
         run(setup_NIE)
+        task.wait(10)
+        if rep_storage.Teleport1 then
+            notify("Unexpected NIE failure", "Portals restored, rejoin to use NIE")
+            rep_storage.Teleport1.Parent = workspace.Lobby
+            rep_storage.Teleport2.Parent = workspace.Lobby
+        end
         return
     end
     notify("NIE setup halted", "NIE setup will be halted until you are in the lobby")
@@ -171,6 +177,12 @@ run(function()
             repeat task.wait()
             until localplayer.Character.isInArena.Value == false
             run(setup_NIE)
+            task.wait(10)
+            if rep_storage.Teleport1 then
+                notify("Unexpected NIE failure", "Portals restored, rejoin to use NIE")
+                rep_storage.Teleport1.Parent = workspace.Lobby
+                rep_storage.Teleport2.Parent = workspace.Lobby
+            end
             return
         end
     end)
@@ -298,6 +310,9 @@ local auto_enter_arena = Main:CreateToggle({
     Name = "Auto enter arena",
     CurrentValue = false,
     Callback = function(Value)
+        if not localplayer.Character.isInArena.Value then
+            firetouchinterest(workspace.Lobby.Teleport1)
+        end
         bool_auto_enter = Value
     end,
 })
