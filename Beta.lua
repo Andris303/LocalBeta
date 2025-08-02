@@ -277,6 +277,33 @@ local remove_death_barriers_toggle = Main:CreateToggle({
     end,
 })
 
+-- Auto enter arena bool
+
+local bool_auto_enter = false
+
+-- Auto enter arena watch for change
+
+local function auto_enter_watch()
+    workspace.ChildAdded:Connect(function(child)
+        if child.Name == localplayer.Name and bool_auto_enter then
+            task.wait(.1)
+            firetouchinterest(workspace.Lobby.Teleport1)
+        end
+    end)
+end
+
+-- Auto enter arena
+
+local auto_enter_arena = Main:CreateToggle({
+    Name = "Auto enter arena",
+    CurrentValue = false,
+    Callback = function(Value)
+        bool_auto_enter = Value
+    end,
+})
+
+run(auto_enter_watch)
+
 divider(Main)
 
 -- Gloves
