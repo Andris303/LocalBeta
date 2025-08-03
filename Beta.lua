@@ -626,11 +626,11 @@ local grab_barzil = Troll:CreateButton({
 
         task.wait(.025)
 
-        run(tp, -925, 304, -2)
-
-        task.wait(.05)
-
         rep_storage.GeneralAbility:FireServer() -- Grab target
+
+        task.wait(.025)
+
+        run(tp, -925, 304, -2)
 
         task.wait(.05)
 
