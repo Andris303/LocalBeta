@@ -690,7 +690,7 @@ local jet_powered_fan = {CurrentValue = false}
 
 local function jet_powered_function()
     while task.wait() do
-        if not jet_powered_fan.CurrentValue then break end
+        if not jet_powered_fan.CurrentValue then break end -- if jet powered fan is toggled off, break the loop
         game:GetService("ReplicatedStorage"):WaitForChild("GeneralAbility"):FireServer()
     end
 end
