@@ -707,6 +707,25 @@ end
 
 run(power_jet_func)
 
+local lag_server = Troll:CreateButton({
+    Name = "Crash server | CANNOT UNDO!",
+    Callback = function()
+        tp(table.unpack(pos_table.Safespot))
+        task.wait(.2)
+        local function lag()
+            for c = 0, 10000, 1 do
+                task.wait()
+                game:GetService("ReplicatedStorage"):WaitForChild("slapstick"):FireServer("runeffect")
+                game:GetService("ReplicatedStorage"):WaitForChild("slapstick"):FireServer("runeffect")
+                game:GetService("ReplicatedStorage"):WaitForChild("slapstick"):FireServer("runeffect")
+            end
+        end
+        for i = 0, 10, 1 do
+            run(lag)
+        end
+    end,
+})
+
 divider(Troll)
 
 divider(Advanced)
@@ -722,3 +741,12 @@ use_clickdetector = Advanced:CreateToggle({
 })
 
 divider(Advanced)
+
+--[[
+local args = {
+    [1] = "FlamesLoop";
+    [2] = workspace:WaitForChild("CowManglerSoldier", 9e9):WaitForChild("HumanoidRootPart", 9e9);
+}
+
+game:GetService("ReplicatedStorage"):WaitForChild("PlaySoundRemote", 9e9):InvokeServer(unpack(args))
+]]
