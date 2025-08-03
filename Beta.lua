@@ -614,7 +614,7 @@ local grab_barzil = Troll:CreateButton({
 
         run(equip, "Grab") -- Equip grab
 
-        task.wait(.15)
+        task.wait(.1)
 
         if not localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value == "Grab" then return end -- If equip failed then return
 
@@ -628,6 +628,10 @@ local grab_barzil = Troll:CreateButton({
             notify("Target has no humanoid", "Likely due to using diamond or megarock")
             return
         end
+
+        run(tp, table.unpack(pos_table.Lobby))
+
+        task.wait(.11)
 
         firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
 
