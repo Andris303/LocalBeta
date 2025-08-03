@@ -713,14 +713,16 @@ local lag_server = Troll:CreateButton({
         tp(table.unpack(pos_table.Safespot))
         task.wait(.2)
         local function lag()
-            for c = 0, 10000, 1 do
+            for c = 0, 100000, 1 do
                 task.wait()
+                game:GetService("ReplicatedStorage"):WaitForChild("slapstick"):FireServer("runeffect")
+                game:GetService("ReplicatedStorage"):WaitForChild("slapstick"):FireServer("runeffect")
                 game:GetService("ReplicatedStorage"):WaitForChild("slapstick"):FireServer("runeffect")
                 game:GetService("ReplicatedStorage"):WaitForChild("slapstick"):FireServer("runeffect")
                 game:GetService("ReplicatedStorage"):WaitForChild("slapstick"):FireServer("runeffect")
             end
         end
-        for i = 0, 10, 1 do
+        for i = 0, 20, 1 do
             run(lag)
         end
     end,
