@@ -709,6 +709,35 @@ end
 
 run(power_jet_func)
 
+-- big sounds
+
+sound_spam = Troll:CreateToggle({
+    Name = "Sound spam (loud)",
+    CurrentValue = false,
+    Callback = function(Value)
+        -- Empty
+    end,
+})
+
+-- power the sounds
+
+local function sound_spam_func()
+    while true do
+        if sound_spam.CurrentValue then
+            task.wait()
+            for c = 0, 100, 1 do
+                rep_storage:WaitForChild.PlaySoundRemote:InvokeServer("FlamesLoop", localplayer.Character:WaitForChild("HumanoidRootPart"))
+            end
+        else
+            task.wait(.1)
+        end
+    end
+end
+
+run(sound_spam_func)
+
+-- lag server
+
 local lag_server = Troll:CreateButton({
     Name = "Crash server | CANNOT UNDO!",
     Callback = function()
@@ -743,12 +772,3 @@ use_clickdetector = Advanced:CreateToggle({
 })
 
 divider(Advanced)
-
---[[
-local args = {
-    [1] = "FlamesLoop";
-    [2] = workspace:WaitForChild("CowManglerSoldier", 9e9):WaitForChild("HumanoidRootPart", 9e9);
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("PlaySoundRemote", 9e9):InvokeServer(unpack(args))
-]]
