@@ -634,9 +634,9 @@ local grab_barzil = Troll:CreateButton({
 
         task.wait(.11)
 
-        firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 1)
-
-        repeat task.wait()
+        repeat
+            task.wait(.01)
+            firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
         until localplayer.Character.isInArena.Value
 
         task.wait(.05)
