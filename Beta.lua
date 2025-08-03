@@ -113,7 +113,16 @@ local function setup_NIE()
     workspace.Lobby.Teleport1.Parent = rep_storage
     workspace.Lobby.Teleport2.Parent = rep_storage
 
-    local network_folder = rep_storage["_NETWORK"]
+    local network_folder
+    if rep_storage:FindFirstChild("_NETWORK") then
+        network_folder = rep_storage["_NETWORK"]
+    else
+        for _, inst in pairs(rep_storage:GetChildren()) do
+            if string.match(inst.Name, "{") then
+                network_folder = inst
+            end
+        end
+    end
     local current_glove = localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value
     local glove_to_equip = "bus"
 
@@ -213,6 +222,21 @@ if workspace:FindFirstChild("Safespot2") == nil then
     run(create_safespot, "Bobspot2", true, -10000, -50, -10000) -- Also create a duplicate so rob doesn't fall through the baseplate :)
 end
 
+-- Replace barzil with fake (anti barzil)
+
+for _, inst in pairs(workspace.Lobby.brazil:GetChildren()) do
+    inst:Destroy()
+end
+
+local fake_barzil = Instance.new("Part", workspace)
+fake_barzil.Name = "fake_barzil"
+fake_barzil.Position = Vector3.new(-924, 304.53, -1.9)
+fake_barzil.Rotation = Vector3.new(-90, 0, 90)
+fake_barzil.Size = Vector3.new(24, 28, 4)
+fake_barzil.Anchored = true
+fake_barzil.CanCollide = true
+fake_barzil.Transparency = .5
+
 -- Create Tabs
 
 local Main = Window:CreateTab("Main")
@@ -299,7 +323,7 @@ local function auto_enter_watch()
     workspace.ChildAdded:Connect(function(child)
         if child.Name == localplayer.Name and bool_auto_enter then
             task.wait(.1)
-            firetouchinterest(workspace.Lobby.Teleport1)
+            firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
         end
     end)
 end
@@ -311,7 +335,7 @@ local auto_enter_arena = Main:CreateToggle({
     CurrentValue = false,
     Callback = function(Value)
         if not localplayer.Character.isInArena.Value then
-            firetouchinterest(workspace.Lobby.Teleport1)
+            firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
         end
         bool_auto_enter = Value
     end,
@@ -514,6 +538,58 @@ local rob_murder = Troll:CreateButton({
         localplayer.Reset:FireServer() -- Reset
     end,
 })
+
+-- remote: rep_storage.GeneralAbility:FireServer()
+-- remote: rep_storage.Ghostinvisibilityactivated:FireServer()
+
+--[[
+local grab_barzil = Troll:CreateButton({
+    Name = "Bring to barzil with grab",
+    Callback = function()
+        local glove_save = localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value
+        local in_arena = localplayer.Character.isInArena.Value
+        if in_arena then
+            notify("Not in lobby", "Grab barzil doesn\'t work in arena")
+            return
+        end
+        local _unused, target_name = string.match(playerlist_dropdown.CurrentOption[1], "(.+)%s%((.+)%)")
+        if not game:GetService("Players")[target_name].Character:WaitForChild("isInArena").Value then
+            notify("Target not in lobby", "Grab barzil doesn\'t work when target is in lobby")
+            return
+        end
+        if not game:GetService("Players")[target_name].Character:FindFirstChild("Humanoid") then
+            notify("Target has no humanoid", "Likely due to using diamond or megarock")
+            return
+        end
+        run(tp, table.unpack(pos_table.Safespot)) -- TP to safespot
+        run(equip, "rob") -- Equip rob
+        task.wait(.05)
+        if not localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value == "rob" then return end -- If equip failed then return
+        rep_storage.rob:FireServer(false) -- Use ability
+        task.wait(.05)
+        run(equip, glove_save) -- Change back to previous glove
+        task.wait(3.5) -- Wait until animation finishes
+        if not game:GetService("Players")[target_name].Character.isInArena.Value or game:GetService("Players")[target_name].Character:WaitForChild("Humanoid").Health == 0 then
+            notify("Target died", "Target died before rob animation finished")
+            localplayer.Reset:FireServer()
+            return
+        end
+        if not game:GetService("Players")[target_name].Character:FindFirstChild("Humanoid") then
+            notify("Target has no humanoid", "Likely due to using diamond or megarock")
+            return
+        end
+        local target_root = game:GetService("Players")[target_name].Character.HumanoidRootPart
+        local target_position = {target_root.Position.X, target_root.Position.Y, target_root.Position.Z}
+        run(tp, table.unpack(target_position)) -- Teleports to target's position
+        task.wait(.2)
+        run(tp, table.unpack(pos_table.Safespot)) -- TP back to safespot
+        task.wait(.3)
+        run(tp, table.unpack(pos_table.Safespot2)) -- TP to safespot2 to avoid suspicion
+        task.wait(.3)
+        localplayer.Reset:FireServer() -- Reset
+    end,
+})
+]]
 
 divider(Troll)
 
