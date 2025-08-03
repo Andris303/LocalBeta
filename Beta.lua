@@ -620,7 +620,7 @@ local grab_barzil = Troll:CreateButton({
         task.wait(.5)
 
         local target_root = game:GetService("Players")[target_name].Character.HumanoidRootPart
-        localplayer.Character.HumanoidRootPart.CFrame = target_root.CFrame * CFrame.new(0,0,-5) -- Teleport to target slightly behind
+        localplayer.Character.HumanoidRootPart.CFrame = target_root.CFrame * CFrame.new(0,0,5) -- Teleport to target slightly behind
 
         fake_barzil.CanCollide = false -- Disable collision on fake barzil
 
