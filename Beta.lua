@@ -85,6 +85,15 @@ local function tp(x, y, z)
     end
 end
 
+-- Teleport with tweenservice, set speed
+
+local function ttp(x, y, z, s)
+    if localplayer.Character:FindFirstChild("HumanoidRootPart") then -- if root is present
+        local root = localplayer.Character.HumanoidRootPart
+        TweenService:Create(root, TweenInfo.new(s, Enum.EasingStyle.Linear), {CFrame = CFrame.new(x, y, z)}):Play()
+    end
+end
+
 -- Notify user through rayfield's notification system
 
 local function notify(title, content)
@@ -652,11 +661,7 @@ local grab_barzil = Troll:CreateButton({
 
         task.wait(.1)
 
-        run(tp, -925, 310, -2) -- TP to barzil portal
-
-        task.wait(.1)
-
-        localplayer.Character.HumanoidRootPart.Anchored = true -- Anchor player
+        run(ttp, -925, 310, -2, .5) -- TP to barzil portal
 
         task.wait(.7)
 
