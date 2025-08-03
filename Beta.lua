@@ -638,7 +638,7 @@ local grab_barzil = Troll:CreateButton({
 
         fake_barzil.CanCollide = false -- Disable collision on fake barzil
 
-        task.wait(.05)
+        task.wait(.08)
 
         rep_storage.GeneralAbility:FireServer() -- Grab target
 
