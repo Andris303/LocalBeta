@@ -630,7 +630,7 @@ local grab_barzil = Troll:CreateButton({
 
         task.wait(.5)
 
-        run(tp, -925, 304, -2)
+        run(tp, -925, 304, -2) -- TP to barzil portal
 
         task.wait(.5)
 
