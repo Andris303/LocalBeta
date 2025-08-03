@@ -57,6 +57,7 @@ local Window = Rayfield:CreateWindow({
 local bool_use_clickdetector = false
 local localplayer = game:GetService("Players").LocalPlayer
 local rep_storage = game:GetService("ReplicatedStorage")
+local tween_service = game:GetService("TweenService")
 local pos_table = {
     Arena = {0, -5, 0},
     Lobby = {-997, 328, -2},
@@ -90,7 +91,7 @@ end
 local function ttp(x, y, z, s)
     if localplayer.Character:FindFirstChild("HumanoidRootPart") then -- if root is present
         local root = localplayer.Character.HumanoidRootPart
-        game:GetService("TweenService"):Create(root, TweenInfo.new(s, Enum.EasingStyle.Linear), {CFrame = CFrame.new(x, y, z)}):Play()
+        tween_service:Create(root, TweenInfo.new(s, Enum.EasingStyle.Linear), {CFrame = CFrame.new(x, y, z)}):Play()
     end
 end
 
