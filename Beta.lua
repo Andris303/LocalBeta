@@ -635,7 +635,10 @@ local grab_barzil = Troll:CreateButton({
 
         firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
 
-        task.wait(.2)
+        repeat task.wait()
+        until localplayer.Character.isInArena.Value
+
+        task.wait(.05)
 
         local target_root = game:GetService("Players")[target_name].Character.HumanoidRootPart
         localplayer.Character.HumanoidRootPart.CFrame = target_root.CFrame * CFrame.new(0,0,4) -- Teleport to target slightly behind
