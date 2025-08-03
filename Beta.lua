@@ -682,28 +682,30 @@ local grab_barzil = Troll:CreateButton({
 
 divider(Troll)
 
--- Variable to forward declare a toggle
-
-local jet_powered_fan = {CurrentValue = false}
-
--- function to start the jet
-
-local function jet_powered_function()
-    while task.wait() do
-        if not jet_powered_fan.CurrentValue then break end -- if jet powered fan is toggled off, break the loop
-        game:GetService("ReplicatedStorage"):WaitForChild("GeneralAbility"):FireServer()
-    end
-end
-
 -- jet power
 
 jet_powered_fan = Troll:CreateToggle({
     Name = "JET POWERED FAN | 1530$",
     CurrentValue = false,
     Callback = function(Value)
-        if Value then run(jet_powered_function) end
+        -- Empty
     end,
 })
+
+-- power the jet
+
+local function power_jet_func()
+    while true do
+        if jet_powered_fan.CurrentValue then
+            task.wait()
+            rep_storage:WaitForChild("GeneralAbility"):FireServer()
+        else
+            task.wait(.1)
+        end
+    end
+end
+
+run(power_jet_func)
 
 divider(Troll)
 
@@ -720,7 +722,3 @@ use_clickdetector = Advanced:CreateToggle({
 })
 
 divider(Advanced)
-
-while task.wait() do
-    game:GetService("ReplicatedStorage"):WaitForChild("GeneralAbility"):FireServer()
-end
