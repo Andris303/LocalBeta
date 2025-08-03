@@ -772,3 +772,25 @@ use_clickdetector = Advanced:CreateToggle({
 })
 
 divider(Advanced)
+
+--[[
+lorem ipsum text because github refuses to update :P
+
+Lorem ipsum dolor sit amet consectetur adipiscing elit.
+Blandit quis suspendisse aliquet nisi sodales consequat magna.
+Sem placerat in id cursus mi pretium tellus. Finibus facilisis dapibus etiam interdum tortor ligula congue.
+Sed diam urna tempor pulvinar vivamus fringilla lacus. Porta elementum a enim euismod quam justo lectus.
+Nisl malesuada lacinia integer nunc posuere ut hendrerit.
+Imperdiet mollis nullam volutpat porttitor ullamcorper rutrum gravida.
+Ad litora torquent per conubia nostra inceptos himenaeos.
+Ornare sagittis vehicula praesent dui felis venenatis ultrices.
+Dis parturient montes nascetur ridiculus mus donec rhoncus.
+Potenti ultricies habitant morbi senectus netus suscipit auctor.
+Maximus eget fermentum odio phasellus non purus est.
+Platea dictumst lorem ipsum dolor sit amet consectetur.
+Dictum risus blandit quis suspendisse aliquet nisi sodales.
+Vitae pellentesque sem placerat in id cursus mi.
+Luctus nibh finibus facilisis dapibus etiam interdum tortor.
+Eu aenean sed diam urna tempor pulvinar vivamus.
+Tincidunt nam porta elementum a enim euismod quam.
+]]
