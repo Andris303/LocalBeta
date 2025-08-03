@@ -589,7 +589,7 @@ local rob_murder = Troll:CreateButton({
 })
 
 local grab_barzil = Troll:CreateButton({
-    Name = "Bring to barzil with grab",
+    Name = "Banish to barzil with grab",
     Callback = function()
         local glove_save = localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value
         local in_arena = localplayer.Character.isInArena.Value
