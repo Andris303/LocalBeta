@@ -81,6 +81,7 @@ local function tp(x, y, z)
         root.Anchored = true
         root.CFrame = CFrame.new(x, y, z)
         task.wait(.1)
+        root.Anchored = false
     end
 end
 
