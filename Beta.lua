@@ -343,7 +343,7 @@ local function auto_enter_watch()
             firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
         end
         if child.Name == localplayer.Name and bool_equip_saved_glove_grab then
-            task.wait(.1)
+            task.wait(.5)
             run(equip, grab_glove_save)
         end
     end)
