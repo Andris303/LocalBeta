@@ -664,7 +664,7 @@ local grab_barzil = Troll:CreateButton({
 
         run(ttp, -925, 310, -2, .5) -- TP to barzil portal
 
-        task.wait(.7)
+        task.wait(.5)
 
         localplayer.Reset:FireServer() -- Reset
 
@@ -698,7 +698,9 @@ local function power_jet_func()
     while true do
         if jet_powered_fan.CurrentValue then
             task.wait()
-            rep_storage:WaitForChild("GeneralAbility"):FireServer()
+            for c = 0, 1000, 1 do
+                rep_storage:WaitForChild("GeneralAbility"):FireServer()
+            end
         else
             task.wait(.1)
         end
@@ -708,19 +710,19 @@ end
 run(power_jet_func)
 
 local lag_server = Troll:CreateButton({
-    Name = "Lag server | CANNOT UNDO!",
+    Name = "Crash server | CANNOT UNDO!",
     Callback = function()
         tp(table.unpack(pos_table.Safespot))
         task.wait(.2)
         local function lag()
-            for c = 0, 100000, 1 do
+            for c = 0, 1000000, 1 do
                 task.wait()
-                for d = 0, 5, 1 do
+                for d = 0, 50, 1 do
                     game:GetService("ReplicatedStorage"):WaitForChild("slapstick"):FireServer("runeffect")
                 end
             end
         end
-        for i = 0, 20, 1 do
+        for i = 0, 100, 1 do
             run(lag)
         end
     end,
