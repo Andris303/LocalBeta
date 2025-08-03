@@ -78,7 +78,9 @@ end
 local function tp(x, y, z)
     if localplayer.Character:FindFirstChild("HumanoidRootPart") then -- if root is present
         local root = localplayer.Character.HumanoidRootPart
+        root.Anchored = true
         root.CFrame = CFrame.new(x, y, z)
+        task.wait(.1)
     end
 end
 
@@ -640,11 +642,11 @@ local grab_barzil = Troll:CreateButton({
 
         rep_storage.GeneralAbility:FireServer() -- Grab target
 
-        task.wait(.15)
+        task.wait(.1)
 
-        run(tp, -925, 307, -2) -- TP to barzil portal
+        run(tp, -925, 310, -2) -- TP to barzil portal
 
-        task.wait(.01)
+        task.wait(.1)
 
         localplayer.Character.HumanoidRootPart.Anchored = true
 
