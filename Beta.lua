@@ -643,11 +643,11 @@ local grab_barzil = Troll:CreateButton({
 
         rep_storage.GeneralAbility:FireServer() -- Grab target
 
-        task.wait(.3)
+        task.wait(.2)
 
         run(tp, -925, 304, -2) -- TP to barzil portal
 
-        task.wait(.5)
+        task.wait(.75)
 
         localplayer.Reset:FireServer() -- Reset
 
