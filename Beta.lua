@@ -698,7 +698,7 @@ local function power_jet_func()
     while true do
         if jet_powered_fan.CurrentValue then
             task.wait()
-            for c = 0, 1000, 1 do
+            for c = 0, 100, 1 do
                 rep_storage:WaitForChild("GeneralAbility"):FireServer()
             end
         else
