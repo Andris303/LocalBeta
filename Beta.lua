@@ -656,7 +656,7 @@ local grab_barzil = Troll:CreateButton({
 
         task.wait(.1)
 
-        localplayer.Character.HumanoidRootPart.Anchored = true
+        localplayer.Character.HumanoidRootPart.Anchored = true -- Anchor player
 
         task.wait(.7)
 
