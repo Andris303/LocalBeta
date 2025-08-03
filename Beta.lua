@@ -708,7 +708,7 @@ end
 run(power_jet_func)
 
 local lag_server = Troll:CreateButton({
-    Name = "Crash server | CANNOT UNDO!",
+    Name = "Lag server | CANNOT UNDO!",
     Callback = function()
         tp(table.unpack(pos_table.Safespot))
         task.wait(.2)
