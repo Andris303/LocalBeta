@@ -604,7 +604,7 @@ local grab_barzil = Troll:CreateButton({
 
         run(equip, "Ghost") -- Equip ghost
 
-        task.wait(.1)
+        task.wait(.11)
 
         if not localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value == "Ghost" then return end -- If equip failed then return
 
