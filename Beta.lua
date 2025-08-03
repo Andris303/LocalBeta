@@ -588,19 +588,19 @@ local grab_barzil = Troll:CreateButton({
 
         run(equip, "Ghost") -- Equip ghost
 
-        task.wait(.05)
+        task.wait(.5)
 
         if not localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value == "Ghost" then return end -- If equip failed then return
 
         rep_storage.Ghostinvisibilityactivated:FireServer() -- Become invisible
 
-        task.wait(.05)
+        task.wait(.5)
 
         run(equip, "Grab") -- Equip grab
 
         run(tp, table.unpack(pos_table.Lobby)) -- TP to lobby
 
-        task.wait(.05)
+        task.wait(.5)
 
         if not localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value == "Grab" then return end -- If equip failed then return
 
@@ -619,28 +619,30 @@ local grab_barzil = Troll:CreateButton({
 
         firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
 
-        task.wait(.05)
+        task.wait(.5)
 
         local target_root = game:GetService("Players")[target_name].Character.HumanoidRootPart
         localplayer.Character.HumanoidRootPart.CFrame = target_root.CFrame * CFrame.new(0,0,-5) -- Teleport to target slightly behind
 
         fake_barzil.CanCollide = false -- Disable collision on fake barzil
 
-        task.wait(.025)
+        task.wait(.5)
 
         rep_storage.GeneralAbility:FireServer() -- Grab target
 
-        task.wait(.025)
+        task.wait(.5)
 
         run(tp, -925, 304, -2)
 
-        task.wait(.05)
+        task.wait(.5)
 
         run(equip, glove_save) -- Change back to previous glove
 
-        task.wait(.05)
+        task.wait(.5)
 
         localplayer.Reset:FireServer() -- Reset
+
+        fake_barzil.CanCollide = true -- Enable collision on fake barzil
     end,
 })
 
