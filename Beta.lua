@@ -80,7 +80,7 @@ local function tp(x, y, z)
         local root = localplayer.Character.HumanoidRootPart
         root.Anchored = true
         root.CFrame = CFrame.new(x, y, z)
-        task.wait(.1)
+        task.wait(.5)
         root.Anchored = false
     end
 end
@@ -635,19 +635,19 @@ local grab_barzil = Troll:CreateButton({
         task.wait(.2)
 
         local target_root = game:GetService("Players")[target_name].Character.HumanoidRootPart
-        localplayer.Character.HumanoidRootPart.CFrame = target_root.CFrame * CFrame.new(0,0,5) -- Teleport to target slightly behind
+        localplayer.Character.HumanoidRootPart.CFrame = target_root.CFrame * CFrame.new(0,0,4) -- Teleport to target slightly behind
 
         fake_barzil.CanCollide = false -- Disable collision on fake barzil
 
-        task.wait(.15)
+        task.wait(.05)
 
         rep_storage.GeneralAbility:FireServer() -- Grab target
 
-        task.wait(.2)
+        task.wait(.15)
 
-        run(tp, -925, 304, -2) -- TP to barzil portal
+        run(tp, -925, 307, -2) -- TP to barzil portal
 
-        task.wait(.75)
+        task.wait(.5)
 
         localplayer.Reset:FireServer() -- Reset
 
@@ -656,7 +656,7 @@ local grab_barzil = Troll:CreateButton({
         bool_equip_saved_glove_grab = true
         grab_glove_save = glove_save
 
-        task.wait(5)
+        task.wait(4.5)
 
         bool_equip_saved_glove_grab = false
         grab_glove_save = nil
