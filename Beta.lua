@@ -726,7 +726,7 @@ local function sound_spam_func()
         if sound_spam.CurrentValue then
             task.wait()
             for c = 0, 100, 1 do
-                rep_storage:WaitForChild.PlaySoundRemote:InvokeServer("FlamesLoop", localplayer.Character:WaitForChild("HumanoidRootPart"))
+                rep_storage.PlaySoundRemote:InvokeServer("FlamesLoop", localplayer.Character:WaitForChild("HumanoidRootPart"))
             end
         else
             task.wait(.1)
