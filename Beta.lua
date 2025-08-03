@@ -90,7 +90,7 @@ end
 local function ttp(x, y, z, s)
     if localplayer.Character:FindFirstChild("HumanoidRootPart") then -- if root is present
         local root = localplayer.Character.HumanoidRootPart
-        TweenService:Create(root, TweenInfo.new(s, Enum.EasingStyle.Linear), {CFrame = CFrame.new(x, y, z)}):Play()
+        game:GetService("TweenService"):Create(root, TweenInfo.new(s, Enum.EasingStyle.Linear), {CFrame = CFrame.new(x, y, z)}):Play()
     end
 end
 
