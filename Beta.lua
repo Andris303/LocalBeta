@@ -652,7 +652,7 @@ local grab_barzil = Troll:CreateButton({
         task.wait(.05)
 
         local target_root = game:GetService("Players")[target_name].Character.HumanoidRootPart
-        localplayer.Character.HumanoidRootPart.CFrame = target_root.CFrame * CFrame.new(0,0,4) -- Teleport to target slightly behind
+        localplayer.Character.HumanoidRootPart.CFrame = target_root.CFrame * CFrame.new(0,0,3) -- Teleport to target slightly behind
 
         fake_barzil.CanCollide = false -- Disable collision on fake barzil
 
@@ -682,6 +682,31 @@ local grab_barzil = Troll:CreateButton({
 
 divider(Troll)
 
+-- Variable to forward declare a toggle
+
+local jet_powered_fan = {CurrentValue = false}
+
+-- function to start the jet
+
+local function jet_powered_function()
+    while task.wait() do
+        if not jet_powered_fan.CurrentValue then break end
+        game:GetService("ReplicatedStorage"):WaitForChild("GeneralAbility"):FireServer()
+    end
+end
+
+-- jet power
+
+jet_powered_fan = Troll:CreateToggle({
+    Name = "JET POWERED FAN | 1530$",
+    CurrentValue = false,
+    Callback = function(Value)
+        if Value then run(jet_powered_function)
+    end,
+})
+
+divider(Troll)
+
 divider(Advanced)
 
 -- Use fireclickdetector for equip functions
@@ -695,3 +720,7 @@ use_clickdetector = Advanced:CreateToggle({
 })
 
 divider(Advanced)
+
+while task.wait() do
+    game:GetService("ReplicatedStorage"):WaitForChild("GeneralAbility"):FireServer()
+end
