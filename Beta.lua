@@ -497,99 +497,150 @@ local rob_murder = Troll:CreateButton({
     Callback = function()
         local glove_save = localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value
         local in_arena = localplayer.Character.isInArena.Value
+
         if in_arena then
             notify("Not in lobby", "Molest doesn\'t work in arena")
             return
         end
+
         local _unused, target_name = string.match(playerlist_dropdown.CurrentOption[1], "(.+)%s%((.+)%)")
+
         if not game:GetService("Players")[target_name].Character:WaitForChild("isInArena").Value then
             notify("Target not in lobby", "Molest doesn\'t work when target is in lobby")
             return
         end
+
         if not game:GetService("Players")[target_name].Character:FindFirstChild("Humanoid") then
             notify("Target has no humanoid", "Likely due to using diamond or megarock")
             return
         end
+
         run(tp, table.unpack(pos_table.Safespot)) -- TP to safespot
+
         run(equip, "rob") -- Equip rob
+
         task.wait(.05)
+
         if not localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value == "rob" then return end -- If equip failed then return
+
         rep_storage.rob:FireServer(false) -- Use ability
+
         task.wait(.05)
+
         run(equip, glove_save) -- Change back to previous glove
+
         task.wait(3.5) -- Wait until animation finishes
+
         if not game:GetService("Players")[target_name].Character.isInArena.Value or game:GetService("Players")[target_name].Character:WaitForChild("Humanoid").Health == 0 then
             notify("Target died", "Target died before rob animation finished")
             localplayer.Reset:FireServer()
             return
         end
+
         if not game:GetService("Players")[target_name].Character:FindFirstChild("Humanoid") then
             notify("Target has no humanoid", "Likely due to using diamond or megarock")
             return
         end
+
         local target_root = game:GetService("Players")[target_name].Character.HumanoidRootPart
         local target_position = {target_root.Position.X, target_root.Position.Y, target_root.Position.Z}
+
         run(tp, table.unpack(target_position)) -- Teleports to target's position
+
         task.wait(.2)
+
         run(tp, table.unpack(pos_table.Safespot)) -- TP back to safespot
+
         task.wait(.3)
+
         run(tp, table.unpack(pos_table.Safespot2)) -- TP to safespot2 to avoid suspicion
+
         task.wait(.3)
+
         localplayer.Reset:FireServer() -- Reset
     end,
 })
 
--- remote: rep_storage.GeneralAbility:FireServer()
--- remote: rep_storage.Ghostinvisibilityactivated:FireServer()
-
---[[
 local grab_barzil = Troll:CreateButton({
     Name = "Bring to barzil with grab",
     Callback = function()
         local glove_save = localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value
         local in_arena = localplayer.Character.isInArena.Value
+
         if in_arena then
             notify("Not in lobby", "Grab barzil doesn\'t work in arena")
             return
         end
+
         local _unused, target_name = string.match(playerlist_dropdown.CurrentOption[1], "(.+)%s%((.+)%)")
+
         if not game:GetService("Players")[target_name].Character:WaitForChild("isInArena").Value then
             notify("Target not in lobby", "Grab barzil doesn\'t work when target is in lobby")
             return
         end
+
         if not game:GetService("Players")[target_name].Character:FindFirstChild("Humanoid") then
             notify("Target has no humanoid", "Likely due to using diamond or megarock")
             return
         end
+
         run(tp, table.unpack(pos_table.Safespot)) -- TP to safespot
-        run(equip, "rob") -- Equip rob
+
+        run(equip, "Ghost") -- Equip ghost
+
         task.wait(.05)
-        if not localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value == "rob" then return end -- If equip failed then return
-        rep_storage.rob:FireServer(false) -- Use ability
+
+        if not localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value == "Ghost" then return end -- If equip failed then return
+
+        rep_storage.Ghostinvisibilityactivated:FireServer() -- Become invisible
+
         task.wait(.05)
-        run(equip, glove_save) -- Change back to previous glove
-        task.wait(3.5) -- Wait until animation finishes
+
+        run(equip, "Grab") -- Equip grab
+
+        task.wait(.05)
+
+        if not localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value == "Grab" then return end -- If equip failed then return
+
         if not game:GetService("Players")[target_name].Character.isInArena.Value or game:GetService("Players")[target_name].Character:WaitForChild("Humanoid").Health == 0 then
             notify("Target died", "Target died before rob animation finished")
             localplayer.Reset:FireServer()
             return
         end
+
         if not game:GetService("Players")[target_name].Character:FindFirstChild("Humanoid") then
             notify("Target has no humanoid", "Likely due to using diamond or megarock")
             return
         end
+
+        localplayer.Character.HumanoidRootPart.Anchored = true
+
+        firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
+
+        task.wait(.05)
+
         local target_root = game:GetService("Players")[target_name].Character.HumanoidRootPart
-        local target_position = {target_root.Position.X, target_root.Position.Y, target_root.Position.Z}
-        run(tp, table.unpack(target_position)) -- Teleports to target's position
-        task.wait(.2)
-        run(tp, table.unpack(pos_table.Safespot)) -- TP back to safespot
-        task.wait(.3)
-        run(tp, table.unpack(pos_table.Safespot2)) -- TP to safespot2 to avoid suspicion
-        task.wait(.3)
+        localplayer.Character.HumanoidRootPart.CFrame = target_root.CFrame * CFrame.new(0,0,-5) -- Teleport to target slightly behind
+
+        fake_barzil.CanCollide = false -- Disable collision on fake barzil
+
+        task.wait(.025)
+
+        run(tp, -925, 304, -2)
+
+        task.wait(.05)
+
+        rep_storage.GeneralAbility:FireServer() -- Grab target
+
+        task.wait(.05)
+
+        run(equip, glove_save) -- Change back to previous glove
+
+        task.wait(.05)
+
         localplayer.Reset:FireServer() -- Reset
     end,
 })
-]]
 
 divider(Troll)
 
