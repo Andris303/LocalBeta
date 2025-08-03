@@ -615,8 +615,6 @@ local grab_barzil = Troll:CreateButton({
             return
         end
 
-        localplayer.Character.HumanoidRootPart.Anchored = true -- Anchor humanoid
-
         firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
 
         task.wait(.5)
