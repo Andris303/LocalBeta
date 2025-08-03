@@ -632,28 +632,34 @@ local grab_barzil = Troll:CreateButton({
 
         firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
 
-        task.wait(.1)
+        task.wait(.2)
 
         local target_root = game:GetService("Players")[target_name].Character.HumanoidRootPart
         localplayer.Character.HumanoidRootPart.CFrame = target_root.CFrame * CFrame.new(0,0,5) -- Teleport to target slightly behind
 
         fake_barzil.CanCollide = false -- Disable collision on fake barzil
 
-        task.wait(.075)
+        task.wait(.15)
 
         rep_storage.GeneralAbility:FireServer() -- Grab target
 
-        task.wait(.1)
+        task.wait(.3)
 
         run(tp, -925, 304, -2) -- TP to barzil portal
 
-        task.wait(.25)
+        task.wait(.5)
 
         localplayer.Reset:FireServer() -- Reset
 
         fake_barzil.CanCollide = true -- Enable collision on fake barzil
 
+        bool_equip_saved_glove_grab = true
+        grab_glove_save = glove_save
 
+        task.wait(5)
+
+        bool_equip_saved_glove_grab = false
+        grab_glove_save = nil
     end,
 })
 
