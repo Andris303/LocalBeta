@@ -108,6 +108,9 @@ local function setup_NIE()
     end
     rep_storage.Teleport1.Parent = workspace.Lobby
     rep_storage.Teleport2.Parent = workspace.Lobby
+
+    bool_use_clickdetector = true
+
     notify("NIE setup failure", "Features using NIE will not work")
 end
 
@@ -138,9 +141,10 @@ run(function()
         run(setup_NIE)
         task.wait(10)
         if rep_storage:FindFirstChild("Teleport1") then
-            notify("Unexpected NIE failure", "Portals restored, rejoin to use NIE")
+            bool_use_clickdetector = true
             rep_storage.Teleport1.Parent = workspace.Lobby
             rep_storage.Teleport2.Parent = workspace.Lobby
+            notify("Unexpected NIE failure", "Portals restored, rejoin to use NIE")
         end
         return
     end
@@ -154,9 +158,10 @@ run(function()
             run(setup_NIE)
             task.wait(10)
             if rep_storage:FindFirstChild("Teleport1") then
-                notify("Unexpected NIE failure", "Portals restored, rejoin to use NIE")
+                bool_use_clickdetector = true
                 rep_storage.Teleport1.Parent = workspace.Lobby
                 rep_storage.Teleport2.Parent = workspace.Lobby
+                notify("Unexpected NIE failure", "Portals restored, rejoin to use NIE")
             end
             return
         end
@@ -192,23 +197,23 @@ fake_barzil.Transparency = .5
 
 -- Create Tabs
 
-local Main = Window:CreateTab("Main")
+local Misc = Window:CreateTab("Misc")
 
-local Gloves = Window:CreateTab("Gloves")
+local Target = Window:CreateTab("Target")
 
-local Troll = Window:CreateTab("Troll")
+local Abuse = Window:CreateTab("Abuse")
 
-local Advanced = Window:CreateTab("Advanced")
+local Glove = Window:CreateTab("Glove")
 
 -- Create elements in tabs
 
--- Main
+-- Misc
 
-Main:CreateDivider()
+Misc:CreateDivider()
 
 -- Text box for equipping gloves
 
-local equip_text_box = Main:CreateInput({
+local equip_text_box = Misc:CreateInput({
     Name = "Glove",
     CurrentValue = "",
     PlaceholderText = "Eg: Default",
@@ -218,7 +223,7 @@ local equip_text_box = Main:CreateInput({
 
 -- Button for equipping gloves
 
-local equip_button = Main:CreateButton({
+local equip_button = Misc:CreateButton({
     Name = "Equip Glove",
     Callback = function()
         run(equip, equip_text_box.CurrentValue)
@@ -231,7 +236,7 @@ local reset_TP_dropdown
 
 -- TP dropdown
 
-local TP_dropdown = Main:CreateDropdown({
+local TP_dropdown = Misc:CreateDropdown({
     Name = "Teleport",
     Options = {"Arena","Lobby","Safespot","Hitman","Cannon","Slapple"},
     CurrentOption = {},
@@ -251,7 +256,7 @@ end
 
 -- Toggle death barriers
 
-local remove_death_barriers_toggle = Main:CreateToggle({
+local remove_death_barriers_toggle = Misc:CreateToggle({
     Name = "Remove death barriers",
     CurrentValue = false,
     Callback = function(Value)
@@ -274,7 +279,7 @@ local grab_glove_save
 
 -- Auto enter arena
 
-local auto_enter_arena = Main:CreateToggle({
+local auto_enter_arena = Misc:CreateToggle({
     Name = "Auto enter arena",
     CurrentValue = false,
     Callback = function(Value)
@@ -286,6 +291,7 @@ local auto_enter_arena = Main:CreateToggle({
 })
 
 -- Auto enter arena: watch for change
+-- Also used by grab barzil to change gloves after reset
 
 run(function()
     workspace.ChildAdded:Connect(function(child)
@@ -300,109 +306,15 @@ run(function()
     end)
 end)
 
-Main:CreateDivider()
+Misc:CreateDivider()
 
--- Gloves
+-- Target
 
-Gloves:CreateDivider()
-
--- Auto click your own tycoon
-
--- locals to trick my own code lmao
-
-local auto_click = {CurrentValue = nil}
-local auto_destroy = {CurrentValue = nil}
-
--- function to auto click specific tycoon
-
-local function auto_click_tycoon(inst)
-    task.wait(.2)
-
-    if not inst:FindFirstChild("Click") or not auto_click.CurrentValue then return end
-
-    local clicky = inst.Click:WaitForChild("ClickDetector")
-
-    while true do
-        task.wait()
-        if not inst:FindFirstChild("Click") or not auto_click.CurrentValue then break end
-        fireclickdetector(clicky)
-    end
-end
-
--- function to destroy specific tycoon
-
-local function destroy_tycoon(inst)
-    task.wait(.2)
-
-    if not inst:FindFirstChild("Destruct") or not auto_destroy.CurrentValue then return end
-
-    local destructy = inst.Destruct:WaitForChild("ClickDetector")
-    local counter = inst.Counter.Part.SurfaceGui.TextLabel
-
-    if tonumber(counter.Text) < 499 then
-        fireclickdetector(destructy)
-    else
-        repeat
-            task.wait()
-            fireclickdetector(destructy)
-        until inst.SDCounter.Counter.SurfaceGui.TextLabel.Text == "100"
-    end
-end
-
--- auto click tycoons toggle
-
-auto_click = Gloves:CreateToggle({
-    Name = "Auto click tycoon",
-    CurrentValue = false,
-    Callback = function(Value)
-        if workspace:FindFirstChild("\195\133Tycoon" .. localplayer.Name) then
-            run(auto_click_tycoon, workspace:FindFirstChild("\195\133Tycoon" .. localplayer.Name))
-        end
-    end,
-})
-
--- Auto destroy tycoons toggle
-
-auto_destroy = Gloves:CreateToggle({
-    Name = "Auto destroy tycoons",
-    CurrentValue = false,
-    Callback = function(Value)
-        for _, inst in pairs(workspace:GetChildren()) do
-            if string.match(inst.Name, "\195\133Tycoon") and inst.Name ~= "\195\133Tycoon" .. localplayer.Name then
-                run(destroy_tycoon, inst)
-            end
-        end
-    end,
-})
-
--- Function to find tycoons to click in a good or avery dark and twisted way
-
-run(function()
-    workspace.ChildAdded:Connect(function(child)
-        if current_instance_number ~= getgenv().BETA_INSTANCE_NUMBER then return end
-        task.wait(.1)
-        if child.Name == "\195\133Tycoon" .. localplayer.Name then
-            if auto_click.CurrentValue then
-                run(auto_click_tycoon, child)
-            end
-        end
-        if string.match(child.Name, "\195\133Tycoon") and child.Name ~= "\195\133Tycoon" .. localplayer.Name  then
-            if auto_destroy.CurrentValue then
-                run(destroy_tycoon, child)
-            end
-        end
-    end)
-end)
-
-Gloves:CreateDivider()
-
--- Troll
-
-Troll:CreateDivider()
+Target:CreateDivider()
 
 -- Dynamic playerlist
 
-local playerlist_dropdown = Troll:CreateDropdown({
+local playerlist_dropdown = Target:CreateDropdown({
     Name = "Select player",
     Options = {"Loading..."},
     CurrentOption = {},
@@ -444,7 +356,7 @@ end)
 
 -- Kill selected player with rob
 
-local rob_murder = Troll:CreateButton({
+local molest = Target:CreateButton({
     Name = "Molest™",
     Callback = function()
         local glove_save = localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value
@@ -520,7 +432,7 @@ local rob_murder = Troll:CreateButton({
 
 -- Teleport selected player to barzil with grab glove
 
-local grab_barzil = Troll:CreateButton({
+local grab_barzil = Target:CreateButton({
     Name = "Banish to barzil",
     Callback = function()
         local glove_save = localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value
@@ -612,34 +524,15 @@ local grab_barzil = Troll:CreateButton({
     end,
 })
 
-Troll:CreateDivider()
+Target:CreateDivider()
 
--- 100 times more powerful jet ability
+-- Abuse
 
-jet_powered_fan = Troll:CreateToggle({
-    Name = "JET POWERED FAN",
-    CurrentValue = false,
-    Callback = function(Value)
-        if Value then run(equip, "Fan") end
-    end,
-})
-
-local function power_jet_func()
-    while true do
-        if jet_powered_fan.CurrentValue then
-            rep_storage:WaitForChild("GeneralAbility"):FireServer()
-            task.wait()
-        else
-            task.wait(.1)
-        end
-    end
-end
-
-run(power_jet_func)
+Abuse:CreateDivider()
 
 -- Spam "flamesloop" sounds
 
-sound_spam = Troll:CreateToggle({
+sound_spam = Abuse:CreateToggle({
     Name = "Sound spam",
     CurrentValue = false,
     Callback = function(Value)
@@ -647,7 +540,7 @@ sound_spam = Troll:CreateToggle({
     end,
 })
 
-local function sound_spam_func()
+run(function()
     while true do
         if sound_spam.CurrentValue then
             rep_storage.PlaySoundRemote:InvokeServer("FlamesLoop", localplayer.Character:WaitForChild("HumanoidRootPart"))
@@ -656,15 +549,11 @@ local function sound_spam_func()
             task.wait(.1)
         end
     end
-end
-
-run(sound_spam_func)
-
-Troll:CreateDivider()
+end)
 
 -- Lag server by spamming slapstick abilities, reset to stop
 
-local lag_server = Troll:CreateButton({
+local lag_server = Abuse:CreateButton({
     Name = "Lag of doom and destruction",
     Callback = function()
         tp(table.unpack(pos_table.Safespot))
@@ -690,9 +579,122 @@ local lag_server = Troll:CreateButton({
     end,
 })
 
-Troll:CreateDivider()
+Abuse:CreateDivider()
 
-Advanced:CreateDivider()
+-- Gloves
+
+Glove:CreateDivider()
+
+-- Auto click your own tycoon
+
+-- locals to trick my own code lmao
+
+local auto_click = {CurrentValue = nil}
+local auto_destroy = {CurrentValue = nil}
+
+-- function to auto click specific tycoon
+
+local function auto_click_tycoon(inst)
+    task.wait(.2)
+
+    if not inst:FindFirstChild("Click") or not auto_click.CurrentValue then return end
+
+    local clicky = inst.Click:WaitForChild("ClickDetector")
+
+    while true do
+        task.wait()
+        if not inst:FindFirstChild("Click") or not auto_click.CurrentValue then break end
+        fireclickdetector(clicky)
+    end
+end
+
+-- function to destroy specific tycoon
+
+local function destroy_tycoon(inst)
+    task.wait(.2)
+
+    if not inst:FindFirstChild("Destruct") or not auto_destroy.CurrentValue then return end
+
+    local destructy = inst.Destruct:WaitForChild("ClickDetector")
+    local counter = inst.Counter.Part.SurfaceGui.TextLabel
+
+    if tonumber(counter.Text) < 499 then
+        fireclickdetector(destructy)
+    else
+        repeat
+            task.wait()
+            fireclickdetector(destructy)
+        until inst.SDCounter.Counter.SurfaceGui.TextLabel.Text == "100"
+    end
+end
+
+-- auto click tycoons toggle
+
+auto_click = Gloves:CreateToggle({
+    Name = "Auto click tycoon",
+    CurrentValue = false,
+    Callback = function(Value)
+        if workspace:FindFirstChild("\195\133Tycoon" .. localplayer.Name) then
+            run(auto_click_tycoon, workspace:FindFirstChild("\195\133Tycoon" .. localplayer.Name))
+        end
+    end,
+})
+
+-- Auto destroy tycoons toggle
+
+auto_destroy = Gloves:CreateToggle({
+    Name = "Auto destroy tycoons",
+    CurrentValue = false,
+    Callback = function(Value)
+        for _, inst in pairs(workspace:GetChildren()) do
+            if string.match(inst.Name, "\195\133Tycoon") and inst.Name ~= "\195\133Tycoon" .. localplayer.Name then
+                run(destroy_tycoon, inst)
+            end
+        end
+    end,
+})
+
+-- Function to find tycoons to click in a good or avery dark and twisted way
+
+run(function()
+    workspace.ChildAdded:Connect(function(child)
+        if current_instance_number ~= getgenv().BETA_INSTANCE_NUMBER then return end
+        task.wait(.1)
+        if child.Name == "\195\133Tycoon" .. localplayer.Name then
+            if auto_click.CurrentValue then
+                run(auto_click_tycoon, child)
+            end
+        end
+        if string.match(child.Name, "\195\133Tycoon") and child.Name ~= "\195\133Tycoon" .. localplayer.Name  then
+            if auto_destroy.CurrentValue then
+                run(destroy_tycoon, child)
+            end
+        end
+    end)
+end)
+
+-- 100 times more powerful jet ability
+
+jet_powered_fan = Troll:CreateToggle({
+    Name = "JET POWERED FAN",
+    CurrentValue = false,
+    Callback = function(Value)
+        if Value then run(equip, "Fan") end
+    end,
+})
+
+run(function()
+    while true do
+        if jet_powered_fan.CurrentValue then
+            rep_storage:WaitForChild("GeneralAbility"):FireServer()
+            task.wait()
+        else
+            task.wait(.1)
+        end
+    end
+end)
+
+Glove:CreateDivider()
 
 -- Use fireclickdetector for equip functions
 
@@ -703,5 +705,3 @@ use_clickdetector = Advanced:CreateToggle({
         bool_use_clickdetector = Value
     end,
 })
-
-Advanced:CreateDivider()
