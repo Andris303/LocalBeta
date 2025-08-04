@@ -1,6 +1,22 @@
 -- Beta | Slap Battles Hub
 
--- Check if hub has been loaded already
+-- Locals
+
+local bool_use_clickdetector = false -- Use fireclickdetector for equipping gloves
+local localplayer = game:GetService("Players").LocalPlayer
+local rep_storage = game:GetService("ReplicatedStorage")
+local tween_service = game:GetService("TweenService")
+local pos_table = { -- Dictionary of all positions and spots ingame
+    Arena = {0, -5, 0},
+    Lobby = {-997, 328, -2},
+    Safespot = {10000, -45, 10000},
+    Safespot2 = {-10000, -45, -10000},
+    Hitman = {17893, -24, -3548},
+    Cannon = {264, 34, 199},
+    Slapple = {-403, 51, -15},
+}
+
+-- Set hub instance number to break connections
 
 getgenv().BETA_INSTANCE_NUMBER = "BETA_" .. math.random(1000000, 9999999)
 local current_instance_number = getgenv().BETA_INSTANCE_NUMBER
@@ -51,54 +67,6 @@ local Window = Rayfield:CreateWindow({
 })
 
 -- Code
-
--- Locals
-
-local bool_use_clickdetector = false
-local localplayer = game:GetService("Players").LocalPlayer
-local rep_storage = game:GetService("ReplicatedStorage")
-local tween_service = game:GetService("TweenService")
-local pos_table = {
-    Arena = {0, -5, 0},
-    Lobby = {-997, 328, -2},
-    Safespot = {10000, -45, 10000},
-    Safespot2 = {-10000, -45, -10000},
-    Hitman = {17893, -24, -3548},
-    Cannon = {264, 34, 199},
-    Slapple = {-403, 51, -15},
-}
-
--- Runs functions on a different thread
-
-local function run(...)
-    task.spawn(...)
-end
-
--- Basic root position changing
-
-local function tp(x, y, z)
-    if localplayer.Character:FindFirstChild("HumanoidRootPart") then -- if root is present
-        local root = localplayer.Character.HumanoidRootPart
-        root.CFrame = CFrame.new(x, y, z)
-    end
-end
-
--- Notify user through rayfield's notification system
-
-local function notify(title, content)
-    Rayfield:Notify({
-        Title = title,
-        Content = content,
-        Duration = 6.5,
-        Image = 4483362458,
-    })
-end
-
--- Create Divider
-
-local function divider(tab)
-    tab:CreateDivider()
-end
 
 -- Checks if NIE is setup, if it isn't, it sets NIE up (Network Instance Equipping)
 
@@ -195,19 +163,6 @@ run(function()
     end)
 end)
 
--- Safespot create function
-
-local function create_safespot(name, bool_bob, posx, posy, posz)
-    local Safespot = Instance.new("Part",workspace)
-    Safespot.Name = "name"
-    Safespot.Position = Vector3.new(posx,posy,posz)
-    Safespot.Size = Vector3.new(5000,10,5000)
-    Safespot.Anchored = true
-    Safespot.CanCollide = true
-    Safespot.Transparency = .5
-    if bool_bob then Safespot.CollisionGroup = "Bobstuff" end
-end
-
 -- Create Safespot
 
 if workspace:FindFirstChild("Safespot") == nil then
@@ -249,7 +204,7 @@ local Advanced = Window:CreateTab("Advanced")
 
 -- Main
 
-divider(Main)
+Main:CreateDivider()
 
 -- Text box for equipping gloves
 
@@ -288,7 +243,7 @@ local TP_dropdown = Main:CreateDropdown({
     end,
 })
 
--- lol
+-- reset_TP_dropdown is here now
 
 function reset_TP_dropdown()
     TP_dropdown:Set({"None"})
@@ -311,32 +266,11 @@ local remove_death_barriers_toggle = Main:CreateToggle({
     end,
 })
 
--- Auto enter arena bool
+-- Locals for saving between features
 
 local bool_auto_enter = false
-
--- Equip saved glove bool
-
 local bool_equip_saved_glove_grab = false
-
--- Glove save
-
 local grab_glove_save
-
--- Auto enter arena watch for change
-
-local function auto_enter_watch()
-    workspace.ChildAdded:Connect(function(child)
-        if child.Name == localplayer.Name and bool_auto_enter then
-            task.wait(.1)
-            firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
-        end
-        if child.Name == localplayer.Name and bool_equip_saved_glove_grab then
-            task.wait(.5)
-            run(equip, grab_glove_save)
-        end
-    end)
-end
 
 -- Auto enter arena
 
@@ -351,15 +285,26 @@ local auto_enter_arena = Main:CreateToggle({
     end,
 })
 
-run(auto_enter_watch)
+-- Auto enter arena: watch for change
 
-divider(Main)
+run(function()
+    workspace.ChildAdded:Connect(function(child)
+        if child.Name == localplayer.Name and bool_auto_enter then
+            task.wait(.1)
+            firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
+        end
+        if child.Name == localplayer.Name and bool_equip_saved_glove_grab then
+            task.wait(.5)
+            run(equip, grab_glove_save)
+        end
+    end)
+end)
+
+Main:CreateDivider()
 
 -- Gloves
 
-divider(Gloves)
-
--- workspace["\195\133TycoonBeggarsBazookaTF2"]
+Gloves:CreateDivider()
 
 -- Auto click your own tycoon
 
@@ -370,7 +315,7 @@ local auto_destroy = {CurrentValue = nil}
 
 -- function to auto click specific tycoon
 
-function auto_click_tycoon(inst)
+local function auto_click_tycoon(inst)
     task.wait(.2)
 
     if not inst:FindFirstChild("Click") or not auto_click.CurrentValue then return end
@@ -386,7 +331,7 @@ end
 
 -- function to destroy specific tycoon
 
-function destroy_tycoon(inst)
+local function destroy_tycoon(inst)
     task.wait(.2)
 
     if not inst:FindFirstChild("Destruct") or not auto_destroy.CurrentValue then return end
@@ -430,9 +375,9 @@ auto_destroy = Gloves:CreateToggle({
     end,
 })
 
--- Function to find tycoons to click
+-- Function to find tycoons to click in a good or avery dark and twisted way
 
-local function find_tycoons()
+run(function()
     workspace.ChildAdded:Connect(function(child)
         if current_instance_number ~= getgenv().BETA_INSTANCE_NUMBER then return end
         task.wait(.1)
@@ -447,17 +392,13 @@ local function find_tycoons()
             end
         end
     end)
-end
+end)
 
--- Initialize find tycoons
-
-run(find_tycoons)
-
-divider(Gloves)
+Gloves:CreateDivider()
 
 -- Troll
 
-divider(Troll)
+Troll:CreateDivider()
 
 -- Dynamic playerlist
 
@@ -495,12 +436,13 @@ game:GetService("Players").ChildAdded:Connect(function(_unused)
     if current_instance_number ~= getgenv().BETA_INSTANCE_NUMBER then return end
     run(update_playerlist)
 end)
+
 game:GetService("Players").ChildRemoved:Connect(function(_unused)
     if current_instance_number ~= getgenv().BETA_INSTANCE_NUMBER then return end
     run(update_playerlist)
 end)
 
--- Molest :P
+-- Kill selected player with rob
 
 local rob_murder = Troll:CreateButton({
     Name = "Molest™",
@@ -575,6 +517,8 @@ local rob_murder = Troll:CreateButton({
         grab_glove_save = glove_save
     end,
 })
+
+-- Teleport selected player to barzil with grab glove
 
 local grab_barzil = Troll:CreateButton({
     Name = "Banish to barzil",
@@ -668,19 +612,17 @@ local grab_barzil = Troll:CreateButton({
     end,
 })
 
-divider(Troll)
+Troll:CreateDivider()
 
--- jet power
+-- 100 times more powerful jet ability
 
 jet_powered_fan = Troll:CreateToggle({
     Name = "JET POWERED FAN",
     CurrentValue = false,
     Callback = function(Value)
-        -- Empty
+        if Value then run(equip, "Fan") end
     end,
 })
-
--- power the jet
 
 local function power_jet_func()
     while true do
@@ -695,7 +637,7 @@ end
 
 run(power_jet_func)
 
--- big sounds
+-- Spam "flamesloop" sounds
 
 sound_spam = Troll:CreateToggle({
     Name = "Sound spam",
@@ -704,8 +646,6 @@ sound_spam = Troll:CreateToggle({
         -- Empty
     end,
 })
-
--- power the sounds
 
 local function sound_spam_func()
     while true do
@@ -720,9 +660,9 @@ end
 
 run(sound_spam_func)
 
-divider(Troll)
+Troll:CreateDivider()
 
--- lag server
+-- Lag server by spamming slapstick abilities, reset to stop
 
 local lag_server = Troll:CreateButton({
     Name = "Lag of doom and destruction",
@@ -750,9 +690,9 @@ local lag_server = Troll:CreateButton({
     end,
 })
 
-divider(Troll)
+Troll:CreateDivider()
 
-divider(Advanced)
+Advanced:CreateDivider()
 
 -- Use fireclickdetector for equip functions
 
@@ -764,4 +704,4 @@ use_clickdetector = Advanced:CreateToggle({
     end,
 })
 
-divider(Advanced)
+Advanced:CreateDivider()
