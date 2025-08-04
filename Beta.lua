@@ -79,10 +79,7 @@ end
 local function tp(x, y, z)
     if localplayer.Character:FindFirstChild("HumanoidRootPart") then -- if root is present
         local root = localplayer.Character.HumanoidRootPart
-        root.Anchored = true
         root.CFrame = CFrame.new(x, y, z)
-        task.wait(.1)
-        root.Anchored = false
     end
 end
 
@@ -91,10 +88,7 @@ end
 local function ttp(x, y, z, s)
     if localplayer.Character:FindFirstChild("HumanoidRootPart") then -- if root is present
         local root = localplayer.Character.HumanoidRootPart
-        root.Anchored = true
-        tween_service:Create(root, TweenInfo.new(s, Enum.EasingStyle.Circular, Enum.EasingDirection.Out, 0, false, 0), {Position = Vector3.new(x, y, z)}):Play()
-        task.wait(s)
-        root.Anchored = false
+        tween_service:Create(root, TweenInfo.new(s, Enum.EasingStyle.Circular, Enum.EasingDirection.Out), {Position = Vector3.new(x, y, z)}):Play()
     end
 end
 
@@ -665,9 +659,9 @@ local grab_barzil = Troll:CreateButton({
 
         task.wait(.1)
 
-        run(ttp, -925, 310, -2, 1) -- TP to barzil portal
+        run(tp, -925, 308, -2) -- TP to barzil portal
 
-        task.wait(1)
+        task.wait(.3)
 
         localplayer.Reset:FireServer() -- Reset
 
