@@ -662,9 +662,9 @@ local grab_barzil = Troll:CreateButton({
 
         task.wait(.1)
 
-        run(ttp, -925, 310, -2, .5) -- TP to barzil portal
+        run(ttp, -925, 310, -2, 1) -- TP to barzil portal
 
-        task.wait(.5)
+        task.wait(1)
 
         localplayer.Reset:FireServer() -- Reset
 
@@ -698,9 +698,7 @@ local function power_jet_func()
     while true do
         if jet_powered_fan.CurrentValue then
             task.wait()
-            for c = 0, 100, 1 do
-                rep_storage:WaitForChild("GeneralAbility"):FireServer()
-            end
+            rep_storage:WaitForChild("GeneralAbility"):FireServer()
         else
             task.wait(.1)
         end
@@ -712,7 +710,7 @@ run(power_jet_func)
 -- big sounds
 
 sound_spam = Troll:CreateToggle({
-    Name = "Sound spam (loud)",
+    Name = "Sound spam",
     CurrentValue = false,
     Callback = function(Value)
         -- Empty
@@ -725,9 +723,7 @@ local function sound_spam_func()
     while true do
         if sound_spam.CurrentValue then
             task.wait()
-            for c = 0, 100, 1 do
-                rep_storage.PlaySoundRemote:InvokeServer("FlamesLoop", localplayer.Character:WaitForChild("HumanoidRootPart"))
-            end
+            rep_storage.PlaySoundRemote:InvokeServer("FlamesLoop", game:GetService("Players").EmoSad999.Character:WaitForChild("HumanoidRootPart"))
         else
             task.wait(.1)
         end
@@ -772,25 +768,3 @@ use_clickdetector = Advanced:CreateToggle({
 })
 
 divider(Advanced)
-
---[[
-lorem ipsum text because github refuses to update :P
-
-Lorem ipsum dolor sit amet consectetur adipiscing elit.
-Blandit quis suspendisse aliquet nisi sodales consequat magna.
-Sem placerat in id cursus mi pretium tellus. Finibus facilisis dapibus etiam interdum tortor ligula congue.
-Sed diam urna tempor pulvinar vivamus fringilla lacus. Porta elementum a enim euismod quam justo lectus.
-Nisl malesuada lacinia integer nunc posuere ut hendrerit.
-Imperdiet mollis nullam volutpat porttitor ullamcorper rutrum gravida.
-Ad litora torquent per conubia nostra inceptos himenaeos.
-Ornare sagittis vehicula praesent dui felis venenatis ultrices.
-Dis parturient montes nascetur ridiculus mus donec rhoncus.
-Potenti ultricies habitant morbi senectus netus suscipit auctor.
-Maximus eget fermentum odio phasellus non purus est.
-Platea dictumst lorem ipsum dolor sit amet consectetur.
-Dictum risus blandit quis suspendisse aliquet nisi sodales.
-Vitae pellentesque sem placerat in id cursus mi.
-Luctus nibh finibus facilisis dapibus etiam interdum tortor.
-Eu aenean sed diam urna tempor pulvinar vivamus.
-Tincidunt nam porta elementum a enim euismod quam.
-]]
