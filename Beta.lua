@@ -92,7 +92,7 @@ local function ttp(x, y, z, s)
     if localplayer.Character:FindFirstChild("HumanoidRootPart") then -- if root is present
         local root = localplayer.Character.HumanoidRootPart
         root.Anchored = true
-        tween_service:Create(root, TweenInfo.new(s, Enum.EasingStyle.Linear), {CFrame = CFrame.new(x, y, z)}):Play()
+        tween_service:Create(root, TweenInfo.new(s, Enum.EasingStyle.Circular, Enum.EasingDirection.Out, 0, false, 0), {Position = Vector3.new(x, y, z)}):Play()
         task.wait(s)
         root.Anchored = false
     end
@@ -665,9 +665,9 @@ local grab_barzil = Troll:CreateButton({
 
         task.wait(.1)
 
-        run(ttp, -925, 310, -2, .3) -- TP to barzil portal
+        run(ttp, -925, 310, -2, 1) -- TP to barzil portal
 
-        task.wait(.4)
+        task.wait(1)
 
         localplayer.Reset:FireServer() -- Reset
 
@@ -688,7 +688,7 @@ divider(Troll)
 -- jet power
 
 jet_powered_fan = Troll:CreateToggle({
-    Name = "JET POWERED FAN | 1530$",
+    Name = "JET POWERED FAN",
     CurrentValue = false,
     Callback = function(Value)
         -- Empty
@@ -700,8 +700,8 @@ jet_powered_fan = Troll:CreateToggle({
 local function power_jet_func()
     while true do
         if jet_powered_fan.CurrentValue then
-            task.wait()
             rep_storage:WaitForChild("GeneralAbility"):FireServer()
+            task.wait()
         else
             task.wait(.1)
         end
@@ -725,8 +725,8 @@ sound_spam = Troll:CreateToggle({
 local function sound_spam_func()
     while true do
         if sound_spam.CurrentValue then
+            rep_storage.PlaySoundRemote:InvokeServer("FlamesLoop", localplayer.Character:WaitForChild("HumanoidRootPart"))
             task.wait()
-            rep_storage.PlaySoundRemote:InvokeServer("FlamesLoop", game:GetService("Players").EmoSad999.Character:WaitForChild("HumanoidRootPart"))
         else
             task.wait(.1)
         end
@@ -739,10 +739,9 @@ divider(Troll)
 
 -- lag server
 
-local lag_server = Troll:CreateToggle({
+local lag_server = Troll:CreateButton({
     Name = "Lag of doom and destruction",
-    CurrentValue = false,
-    Callback = function(Value)
+    Callback = function()
         local glove_save = localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value
 
         run(equip, "Ghost") -- Equip ghost
@@ -764,7 +763,10 @@ local lag_server = Troll:CreateToggle({
         -- Don't lag ourself ykyk
 
         localplayer.Character.ChildAdded:Connect(function(child)
-            if child.Name == "runblur" then child:Destroy() end
+            if child.Name == "runblur" then
+                task.wait(.1)
+                child:Destroy()
+            end
         end)
 
         while true do
