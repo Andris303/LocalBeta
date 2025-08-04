@@ -83,15 +83,6 @@ local function tp(x, y, z)
     end
 end
 
--- Teleport with tweenservice, set speed
-
-local function ttp(x, y, z, s)
-    if localplayer.Character:FindFirstChild("HumanoidRootPart") then -- if root is present
-        local root = localplayer.Character.HumanoidRootPart
-        tween_service:Create(root, TweenInfo.new(s, Enum.EasingStyle.Circular, Enum.EasingDirection.Out), {Position = Vector3.new(x, y, z)}):Play()
-    end
-end
-
 -- Notify user through rayfield's notification system
 
 local function notify(title, content)
@@ -736,25 +727,11 @@ divider(Troll)
 local lag_server = Troll:CreateButton({
     Name = "Lag of doom and destruction",
     Callback = function()
-        local glove_save = localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value
-
-        run(equip, "Ghost") -- Equip ghost
-
-        task.wait(.1)
-
-        if not localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value == "Ghost" then return end -- If equip failed then return
-
-        rep_storage.Ghostinvisibilityactivated:FireServer() -- Become invisible
-
-        task.wait(.1)
-
-        run(equip, glove_save) -- Equip saved glove
-
-        tp(table.unpack(pos_table.Arena))
+        tp(table.unpack(pos_table.Safespot))
 
         task.wait(.2)
 
-        -- Don't lag ourself ykyk
+        -- Don't lag ourself :)
 
         localplayer.Character.ChildAdded:Connect(function(child)
             if child.Name == "runblur" then
