@@ -592,7 +592,7 @@ local rob_murder = Troll:CreateButton({
 })
 
 local grab_barzil = Troll:CreateButton({
-    Name = "Banish to barzil with grab",
+    Name = "Banish to barzil",
     Callback = function()
         local glove_save = localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value
         local in_arena = localplayer.Character.isInArena.Value
@@ -735,23 +735,44 @@ end
 
 run(sound_spam_func)
 
+divider(Troll)
+
 -- lag server
 
-local lag_server = Troll:CreateButton({
-    Name = "Crash server | CANNOT UNDO!",
-    Callback = function()
-        tp(table.unpack(pos_table.Safespot))
+local lag_server = Troll:CreateToggle({
+    Name = "Lag of doom and destruction",
+    CurrentValue = false,
+    Callback = function(Value)
+        local glove_save = localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value
+
+        run(equip, "Ghost") -- Equip ghost
+
+        task.wait(.1)
+
+        if not localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value == "Ghost" then return end -- If equip failed then return
+
+        rep_storage.Ghostinvisibilityactivated:FireServer() -- Become invisible
+
+        task.wait(.1)
+
+        run(equip, glove_save) -- Equip saved glove
+
+        tp(table.unpack(pos_table.Arena))
+
         task.wait(.2)
-        local function lag()
-            for c = 0, 1000000, 1 do
-                task.wait()
-                for d = 0, 50, 1 do
-                    game:GetService("ReplicatedStorage"):WaitForChild("slapstick"):FireServer("runeffect")
-                end
-            end
-        end
-        for i = 0, 100, 1 do
-            run(lag)
+
+        -- Don't lag ourself ykyk
+
+        localplayer.Character.ChildAdded:Connect(function(child)
+            if child.Name == "runblur" then child:Destroy() end
+        end)
+
+        while true do
+            if localplayer.Character.Humanoid.Health == 0 then break end
+
+            rep_storage.slapstick:FireServer("runeffect")
+
+            task.wait()
         end
     end,
 })
@@ -771,25 +792,3 @@ use_clickdetector = Advanced:CreateToggle({
 })
 
 divider(Advanced)
-
---[[
-lorem ipsum text because github refuses to update :P
-
-Lorem ipsum dolor sit amet consectetur adipiscing elit.
-Blandit quis suspendisse aliquet nisi sodales consequat magna.
-Sem placerat in id cursus mi pretium tellus. Finibus facilisis dapibus etiam interdum tortor ligula congue.
-Sed diam urna tempor pulvinar vivamus fringilla lacus. Porta elementum a enim euismod quam justo lectus.
-Nisl malesuada lacinia integer nunc posuere ut hendrerit.
-Imperdiet mollis nullam volutpat porttitor ullamcorper rutrum gravida.
-Ad litora torquent per conubia nostra inceptos himenaeos.
-Ornare sagittis vehicula praesent dui felis venenatis ultrices.
-Dis parturient montes nascetur ridiculus mus donec rhoncus.
-Potenti ultricies habitant morbi senectus netus suscipit auctor.
-Maximus eget fermentum odio phasellus non purus est.
-Platea dictumst lorem ipsum dolor sit amet consectetur.
-Dictum risus blandit quis suspendisse aliquet nisi sodales.
-Vitae pellentesque sem placerat in id cursus mi.
-Luctus nibh finibus facilisis dapibus etiam interdum tortor.
-Eu aenean sed diam urna tempor pulvinar vivamus.
-Tincidunt nam porta elementum a enim euismod quam.
-]]
