@@ -66,7 +66,7 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
-local function Notify(title, content)
+local function notify(title, content)
     Rayfield:Notify({
         Title = title,
         Content = content,
@@ -704,13 +704,3 @@ run(function()
 end)
 
 Glove:CreateDivider()
-
--- Use fireclickdetector for equip functions
-
-use_clickdetector = Advanced:CreateToggle({
-    Name = "Use fireclickdetector for equip",
-    CurrentValue = false,
-    Callback = function(Value)
-        bool_use_clickdetector = Value
-    end,
-})
