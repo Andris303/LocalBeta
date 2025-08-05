@@ -783,7 +783,7 @@ local help_farm_kill_toggle = Helper:CreateToggle({
                 task.wait(.1)
             until localplayer.Character.isInArena.Value
 
-            localplayer.Character.HumanoidRootPart.CFrame = game:GetService("Players")[target_help].CFrame * CFrame.new(0,0,-4) -- Teleport to target slightly forward
+            localplayer.Character.HumanoidRootPart.CFrame = game:GetService("Players")[target_help].Character.HumanoidRootPart.CFrame * CFrame.new(0,0,-4) -- Teleport to target slightly forward
             
             task.wait(.25)
 
