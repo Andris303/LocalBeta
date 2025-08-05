@@ -82,17 +82,6 @@ function tp(x, y, z)
     end
 end
 
--- Notify user through rayfield's notification system
-
-function notify(title, content)
-    Rayfield:Notify({
-        Title = title,
-        Content = content,
-        Duration = 6.5,
-        Image = 4483362458,
-    })
-end
-
 -- Safespot create function
 
 function create_safespot(name, bool_bob, posx, posy, posz)
