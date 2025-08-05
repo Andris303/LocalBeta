@@ -66,6 +66,15 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
+local function Notify(title, content)
+    Rayfield:Notify({
+        Title = title,
+        Content = content,
+        Duration = 6.5,
+        Image = 4483362458,
+    })
+end
+
 -- Code
 
 -- Checks if NIE is setup, if it isn't, it sets NIE up (Network Instance Equipping)
