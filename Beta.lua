@@ -12,6 +12,7 @@ local pos_table = { -- Dictionary of all positions and spots ingame
     Safespot = {10000, -45, 10000},
     Safespot2 = {-10000, -45, -10000},
     Hitman = {17893, -24, -3548},
+    Killerfish = {7516, 4280, 6867},
     Cannon = {264, 34, 199},
     Slapple = {-403, 51, -15},
 }
@@ -279,7 +280,7 @@ local reset_TP_dropdown
 
 local TP_dropdown = Misc:CreateDropdown({
     Name = "Teleport",
-    Options = {"Arena","Lobby","Safespot","Hitman","Cannon","Slapple"},
+    Options = {"Arena","Lobby","Safespot","Hitman","Killerfish","Cannon","Slapple"},
     CurrentOption = {},
     MultipleOptions = false,
     Callback = function(Options)
@@ -659,7 +660,7 @@ local function auto_click_tycoon(inst)
 
     if not inst:FindFirstChild("Click") or not auto_click.CurrentValue then return end
 
-    local clicky = inst.Click:WaitForChild("ClickDetector")
+    local clicky = inst:WaitForChild("Click"):WaitForChild("ClickDetector")
 
     while true do
         task.wait()
@@ -675,8 +676,8 @@ local function destroy_tycoon(inst)
 
     if not inst:FindFirstChild("Destruct") or not auto_destroy.CurrentValue then return end
 
-    local destructy = inst.Destruct:WaitForChild("ClickDetector")
-    local counter = inst.Counter.Part.SurfaceGui.TextLabel
+    local destructy = inst:WaitForChild("Destruct"):WaitForChild("ClickDetector")
+    local counter = inst:WaitForChild("Counter"):WaitForChild("Part"):WaitForChild("SurfaceGui"):WaitForChild("TextLabel")
 
     if tonumber(counter.Text) < 499 then
         fireclickdetector(destructy)
@@ -801,7 +802,7 @@ local reset_bring_dropdown
 
 local bring_location_dropdown = Helper:CreateDropdown({
     Name = "Bring player to location",
-    Options = {"Arena","Lobby","Hitman","Cannon","Slapple"},
+    Options = {"Arena","Lobby","Hitman","Killerfish","Cannon","Slapple"},
     CurrentOption = {},
     MultipleOptions = false,
     Callback = function(Options)
