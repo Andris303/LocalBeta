@@ -333,8 +333,9 @@ local auto_enter_arena = Misc:CreateToggle({
     end,
 })
 
--- Auto enter arena: watch for change
--- Also used by grab barzil to change gloves after reset
+-- Used by auto enter arena watch for change
+-- Used by grab barzil to change gloves after reset
+-- Used by kill farm help
 
 run(function()
     workspace.ChildAdded:Connect(function(child)
@@ -356,9 +357,9 @@ run(function()
                 task.wait(.1)
             until localplayer.Character.isInArena.Value
 
-            localplayer.Character.HumanoidRootPart.CFrame = game:GetService("Players")[target_help].Character.HumanoidRootPart.CFrame * CFrame.new(0,0,-4) -- Teleport to target slightly forward
+            localplayer.Character:WaitForChild("HumanoidRootPart").CFrame = game:GetService("Players")[target_help].Character.HumanoidRootPart.CFrame * CFrame.new(0,0,-4) -- Teleport to target slightly forward
             
-            task.wait(.25)
+            task.wait(.4)
 
             localplayer.Reset:FireServer()
         end
@@ -555,7 +556,7 @@ local grab_barzil = Target:CreateButton({
         task.wait(.05)
 
         local target_root = game:GetService("Players")[target_name].Character.HumanoidRootPart
-        localplayer.Character.HumanoidRootPart.CFrame = target_root.CFrame * CFrame.new(0,0,3) -- Teleport to target slightly behind
+        localplayer.Character.HumanoidRootPart.CFrame = target_root.CFrame * CFrame.new(0,0,1) -- Teleport to target slightly behind
 
         fake_barzil.CanCollide = false -- Disable collision on fake barzil
 
@@ -783,13 +784,120 @@ local help_farm_kill_toggle = Helper:CreateToggle({
                 task.wait(.1)
             until localplayer.Character.isInArena.Value
 
-            localplayer.Character.HumanoidRootPart.CFrame = game:GetService("Players")[target_help].Character.HumanoidRootPart.CFrame * CFrame.new(0,0,-4) -- Teleport to target slightly forward
+            localplayer.Character:WaitForChild("HumanoidRootPart").CFrame = game:GetService("Players")[target_help].Character.HumanoidRootPart.CFrame * CFrame.new(0,0,-4) -- Teleport to target slightly forward
             
-            task.wait(.25)
+            task.wait(.4)
 
             localplayer.Reset:FireServer()
         end
     end,
 })
+
+-- Forward declare reset_bring_dropdown
+
+local reset_bring_dropdown
+
+-- Bring selected player to a location
+
+local bring_location_dropdown = Helper:CreateDropdown({
+    Name = "Bring player to location",
+    Options = {"Arena","Lobby","Hitman","Cannon","Slapple"},
+    CurrentOption = {},
+    MultipleOptions = false,
+    Callback = function(Options)
+        if Options[1] == "None" then return end
+
+        local glove_save = localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value
+        local in_arena = localplayer.Character.isInArena.Value
+
+        if in_arena then
+            notify("Not in lobby", "Grab barzil doesn\'t work in arena")
+            return
+        end
+
+        local _unused, target_name = string.match(playerlist_dropdown.CurrentOption[1], "(.+)%s%((.+)%)")
+
+        if not game:GetService("Players")[target_name].Character:WaitForChild("isInArena").Value then
+            notify("Target not in lobby", "Grab barzil doesn\'t work when target is in lobby")
+            return
+        end
+
+        if not game:GetService("Players")[target_name].Character:FindFirstChild("Humanoid") then
+            notify("Target has no humanoid", "Likely due to using diamond or megarock")
+            return
+        end
+
+        run(tp, table.unpack(pos_table.Safespot)) -- TP to safespot
+
+        run(equip, "Ghost") -- Equip ghost
+
+        task.wait(.11)
+
+        if not localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value == "Ghost" then return end -- If equip failed then return
+
+        rep_storage.Ghostinvisibilityactivated:FireServer() -- Become invisible
+
+        task.wait(.1)
+
+        run(equip, "Grab") -- Equip grab
+
+        task.wait(.1)
+
+        if not localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value == "Grab" then return end -- If equip failed then return
+
+        if not game:GetService("Players")[target_name].Character.isInArena.Value or game:GetService("Players")[target_name].Character:WaitForChild("Humanoid").Health == 0 then
+            notify("Target died", "Target died before rob animation finished")
+            localplayer.Reset:FireServer()
+            return
+        end
+
+        if not game:GetService("Players")[target_name].Character:FindFirstChild("Humanoid") then
+            notify("Target has no humanoid", "Likely due to using diamond or megarock")
+            return
+        end
+
+        run(tp, table.unpack(pos_table.Lobby))
+
+        task.wait(.11)
+
+        repeat
+            task.wait(.01)
+            firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
+        until localplayer.Character.isInArena.Value
+
+        task.wait(.05)
+
+        local target_root = game:GetService("Players")[target_name].Character.HumanoidRootPart
+        localplayer.Character.HumanoidRootPart.CFrame = target_root.CFrame * CFrame.new(0,0,3) -- Teleport to target slightly behind
+
+        task.wait(.08)
+
+        rep_storage.GeneralAbility:FireServer() -- Grab target
+
+        task.wait(.1)
+
+        run(tp, table.unpack(pos_table[Options[1]])) -- TP to location
+
+        task.wait(.3)
+
+        localplayer.Reset:FireServer() -- Reset
+
+        bool_equip_saved_glove_grab = true
+        grab_glove_save = glove_save
+
+        task.wait(4.5)
+
+        bool_equip_saved_glove_grab = false
+        grab_glove_save = nil
+
+        run(reset_bring_dropdown)
+    end,
+})
+
+-- reset_bring_dropdown is here now
+
+function reset_bring_dropdown()
+    bring_location_dropdown:Set({"None"})
+end
 
 Helper:CreateDivider()
