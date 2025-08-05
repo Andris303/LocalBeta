@@ -630,7 +630,7 @@ end
 
 -- auto click tycoons toggle
 
-auto_click = Gloves:CreateToggle({
+auto_click = Glove:CreateToggle({
     Name = "Auto click tycoon",
     CurrentValue = false,
     Callback = function(Value)
@@ -642,7 +642,7 @@ auto_click = Gloves:CreateToggle({
 
 -- Auto destroy tycoons toggle
 
-auto_destroy = Gloves:CreateToggle({
+auto_destroy = Glove:CreateToggle({
     Name = "Auto destroy tycoons",
     CurrentValue = false,
     Callback = function(Value)
@@ -675,7 +675,7 @@ end)
 
 -- 100 times more powerful jet ability
 
-jet_powered_fan = Troll:CreateToggle({
+jet_powered_fan = Glove:CreateToggle({
     Name = "JET POWERED FAN",
     CurrentValue = false,
     Callback = function(Value)
