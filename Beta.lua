@@ -244,6 +244,8 @@ local Abuse = Window:CreateTab("Abuse")
 
 local Glove = Window:CreateTab("Glove")
 
+local Helper = Window:CreateTab("Helper")
+
 -- Create elements in tabs
 
 -- Misc
@@ -315,6 +317,8 @@ local remove_death_barriers_toggle = Misc:CreateToggle({
 local bool_auto_enter = false
 local bool_equip_saved_glove_grab = false
 local grab_glove_save
+local bool_help_kill = false
+local target_help
 
 -- Auto enter arena
 
@@ -336,11 +340,27 @@ run(function()
     workspace.ChildAdded:Connect(function(child)
         if child.Name == localplayer.Name and bool_auto_enter then
             task.wait(.1)
-            firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
+            repeat
+                firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
+                task.wait(.1)
+            until localplayer.Character.isInArena.Value
         end
         if child.Name == localplayer.Name and bool_equip_saved_glove_grab then
             task.wait(.5)
             run(equip, grab_glove_save)
+        end
+        if child.Name == localplayer.Name and bool_help_kill then
+            task.wait(.1)
+            repeat
+                firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
+                task.wait(.1)
+            until localplayer.Character.isInArena.Value
+
+            localplayer.Character.HumanoidRootPart.CFrame = game:GetService("Players")[target_help].CFrame * CFrame.new(0,0,-4) -- Teleport to target slightly forward
+            
+            task.wait(.25)
+
+            localplayer.Reset:FireServer()
         end
     end)
 end)
@@ -734,3 +754,42 @@ run(function()
 end)
 
 Glove:CreateDivider()
+
+-- Helper
+
+Helper:CreateDivider()
+
+-- Text box to select player
+
+local select_player_textbox = Helper:CreateInput({
+    Name = "Player to help",
+    CurrentValue = "",
+    PlaceholderText = "Eg: BaconHair123",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(Text)
+        target_help = Text
+    end,
+})
+
+local help_farm_kill_toggle = Helper:CreateToggle({
+    Name = "Help player farm kills",
+    CurrentValue = false,
+    Callback = function(Value)
+        bool_help_kill = Value
+
+        if Value and not localplayer.Character.isInArena.Value then
+            repeat
+                firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
+                task.wait(.1)
+            until localplayer.Character.isInArena.Value
+
+            localplayer.Character.HumanoidRootPart.CFrame = game:GetService("Players")[target_help].CFrame * CFrame.new(0,0,-4) -- Teleport to target slightly forward
+            
+            task.wait(.25)
+
+            localplayer.Reset:FireServer()
+        end
+    end,
+})
+
+Helper:CreateDivider()
