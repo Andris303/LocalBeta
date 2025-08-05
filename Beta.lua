@@ -79,13 +79,13 @@ end
 
 -- Runs functions on a different thread
 
-function run(...)
+local function run(...)
     task.spawn(...)
 end
 
 -- Basic root position changing
 
-function tp(x, y, z)
+local function tp(x, y, z)
     if localplayer.Character:FindFirstChild("HumanoidRootPart") then -- if root is present
         local root = localplayer.Character.HumanoidRootPart
         root.CFrame = CFrame.new(x, y, z)
@@ -94,7 +94,7 @@ end
 
 -- Safespot create function
 
-function create_safespot(name, bool_bob, posx, posy, posz)
+local function create_safespot(name, bool_bob, posx, posy, posz)
     local Safespot = Instance.new("Part",workspace)
     Safespot.Name = "name"
     Safespot.Position = Vector3.new(posx,posy,posz)
