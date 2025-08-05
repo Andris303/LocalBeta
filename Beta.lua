@@ -66,6 +66,8 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
+-- Simply notify the user through rayfield
+
 local function notify(title, content)
     Rayfield:Notify({
         Title = title,
@@ -73,6 +75,34 @@ local function notify(title, content)
         Duration = 6.5,
         Image = 4483362458,
     })
+end
+
+-- Runs functions on a different thread
+
+function run(...)
+    task.spawn(...)
+end
+
+-- Basic root position changing
+
+function tp(x, y, z)
+    if localplayer.Character:FindFirstChild("HumanoidRootPart") then -- if root is present
+        local root = localplayer.Character.HumanoidRootPart
+        root.CFrame = CFrame.new(x, y, z)
+    end
+end
+
+-- Safespot create function
+
+function create_safespot(name, bool_bob, posx, posy, posz)
+    local Safespot = Instance.new("Part",workspace)
+    Safespot.Name = "name"
+    Safespot.Position = Vector3.new(posx,posy,posz)
+    Safespot.Size = Vector3.new(5000,10,5000)
+    Safespot.Anchored = true
+    Safespot.CanCollide = true
+    Safespot.Transparency = .5
+    if bool_bob then Safespot.CollisionGroup = "Bobstuff" end
 end
 
 -- Code
