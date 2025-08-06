@@ -362,7 +362,7 @@ run(function()
                 repeat
                     run(tp, hitbox.Position.X, hitbox.Position.Y, hitbox.Position.Z)
                     task.wait(.1)
-                until localplayer.Character:WaitForChild("Humanoid").Health = 0
+                until localplayer.Character:WaitForChild("Humanoid").Health == 0
             end
         end
 
