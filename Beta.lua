@@ -343,13 +343,15 @@ local auto_enter_arena = Misc:CreateToggle({
 
 run(function()
     workspace.ChildAdded:Connect(function(child)
+        if current_instance_number ~= getgenv().BETA_INSTANCE_NUMBER then return end
+        
         task.wait(.1)
 
         if child.Name == "RunArea" and bool_ready_run then
             task.wait(1.5)
 
             run(tp, child.One.Position.X, child.One.Position.Y + 9, child.One.Position.Z)
-            
+
             task.wait(3)
 
             if workspace:FindFirstChild(target_name .. "\'s Labyrinth") then
