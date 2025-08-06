@@ -345,14 +345,14 @@ run(function()
     workspace.ChildAdded:Connect(function(child)
         task.wait(.1)
 
-        if Child.Name == "RunArea" and bool_ready_run then
+        if child.Name == "RunArea" and bool_ready_run then
             task.wait(1.4)
 
             localplayer.Character:WaitForChild("HumanoidRootPart").Anchored = true
 
             task.wait(.1)
 
-            run(tp, Child.One.Position.X, Child.One.Position.Y + 10, Child.One.Position.Z)
+            run(tp, child.One.Position.X, child.One.Position.Y + 10, child.One.Position.Z)
 
             task.wait(.9)
 
