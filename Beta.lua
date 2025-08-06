@@ -352,7 +352,7 @@ run(function()
 
             task.wait(.1)
 
-            run(tp, child.One.Position.X, child.One.Position.Y + 10, child.One.Position.Z)
+            run(tp, child.One.Position.X, child.One.Position.Y + 5, child.One.Position.Z)
 
             task.wait(.9)
 
@@ -400,6 +400,10 @@ run(function()
             localplayer.Reset:FireServer()
         end
         if bool_help_run then
+            rep_storage.Ghostinvisibilityactivated:FireServer() -- Become invisible
+
+            task.wait(.1)
+            
             repeat
                 firetouchinterest(localplayer.Character:WaitForChild("HumanoidRootPart"), workspace.Lobby.Teleport1, 0)
                 task.wait(.1)
@@ -408,10 +412,6 @@ run(function()
             task.wait(.1)
 
             run(tp, table.unpack(pos_table.Safespot))
-
-            task.wait(.1)
-
-            rep_storage.Ghostinvisibilityactivated:FireServer() -- Become invisible
 
             bool_ready_run = true
         end
@@ -976,7 +976,11 @@ local help_run_mas_toggle = Helper:CreateToggle({
 
         run(equip, "Ghost")
 
-        task.wait(.05)
+        task.wait(.1)
+
+        rep_storage.Ghostinvisibilityactivated:FireServer() -- Become invisible
+
+        task.wait(.1)
 
         repeat
             task.wait(.01)
@@ -986,10 +990,6 @@ local help_run_mas_toggle = Helper:CreateToggle({
         task.wait(.1)
 
         run(tp, table.unpack(pos_table.Safespot))
-
-        task.wait(.1)
-
-        rep_storage.Ghostinvisibilityactivated:FireServer() -- Become invisible
 
         bool_ready_run = true
     end,
