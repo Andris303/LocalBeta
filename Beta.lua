@@ -132,7 +132,7 @@ local function setup_NIE()
     local glove_to_equip = "bus"
 
     for _, inst in pairs(network_folder:GetChildren()) do
-        if string.match(inst.Name, "{") then -- checks if instance is a network instance
+        if string.match(inst.Name, "{") and inst.ClassName == "RemoteEvent" then -- checks if instance is a network instance
             inst:FireServer(glove_to_equip)
             task.wait(.3)
             if localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value == glove_to_equip then
