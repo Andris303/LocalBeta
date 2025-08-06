@@ -346,19 +346,11 @@ run(function()
         task.wait(.1)
 
         if child.Name == "RunArea" and bool_ready_run then
-            task.wait(1.4)
-
-            localplayer.Character:WaitForChild("HumanoidRootPart").Anchored = true
-
-            task.wait(.1)
+            task.wait(1.5)
 
             run(tp, child.One.Position.X, child.One.Position.Y + 9, child.One.Position.Z)
-
-            task.wait(.9)
-
-            localplayer.Character:WaitForChild("HumanoidRootPart").Anchored = false
-
-            task.wait(2)
+            
+            task.wait(3)
 
             if workspace:FindFirstChild(target_name .. "\'s Labyrinth") then
                 local hitbox = workspace[target_name]:WaitForChild("Skull"):WaitForChild("Hitbox")
