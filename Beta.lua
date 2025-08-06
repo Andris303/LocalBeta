@@ -348,6 +348,8 @@ run(function()
         task.wait(.1)
 
         if child.Name == "RunArea" and workspace:FindFirstChild("Orb") and bool_ready_run then
+            bool_ready_run = false
+
             task.wait(1.5)
 
             run(tp, child.One.Position.X, child.One.Position.Y + 9, child.One.Position.Z)
@@ -357,9 +359,10 @@ run(function()
             if workspace:FindFirstChild(target_help .. "\'s Labyrinth") then
                 local hitbox = workspace[target_help]:WaitForChild("Skull"):WaitForChild("Hitbox")
 
-                run(tp, hitbox.Position.X, hitbox.Position.Y, hitbox.Position.Z)
-
-                bool_ready_run = false
+                repeat
+                    run(tp, hitbox.Position.X, hitbox.Position.Y, hitbox.Position.Z)
+                    task.wait(.1)
+                until localplayer.Character:WaitForChild("Humanoid").Health = 0
             end
         end
 
