@@ -12,7 +12,6 @@ local pos_table = { -- Dictionary of all positions and spots ingame
     Safespot = {10000, -45, 10000},
     Safespot2 = {-10000, -45, -10000},
     Hitman = {17893, -24, -3548},
-    Killerfish = {7516, 4280, 6867},
     Cannon = {264, 34, 199},
     Slapple = {-403, 51, -15},
 }
@@ -280,7 +279,7 @@ local reset_TP_dropdown
 
 local TP_dropdown = Misc:CreateDropdown({
     Name = "Teleport",
-    Options = {"Arena","Lobby","Safespot","Hitman","Killerfish","Cannon","Slapple"},
+    Options = {"Arena","Lobby","Safespot","Hitman","Cannon","Slapple"},
     CurrentOption = {},
     MultipleOptions = false,
     Callback = function(Options)
@@ -320,6 +319,9 @@ local bool_equip_saved_glove_grab = false
 local grab_glove_save
 local bool_help_kill = false
 local target_help
+local bool_help_run = false
+local bool_ready_run = false
+local run_glove_save
 
 -- Auto enter arena
 
@@ -328,7 +330,7 @@ local auto_enter_arena = Misc:CreateToggle({
     CurrentValue = false,
     Callback = function(Value)
         if not localplayer.Character.isInArena.Value then
-            firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
+            firetouchinterest(localplayer.Character:WaitForChild("HumanoidRootPart"), workspace.Lobby.Teleport1, 0)
         end
         bool_auto_enter = Value
     end,
@@ -337,24 +339,57 @@ local auto_enter_arena = Misc:CreateToggle({
 -- Used by auto enter arena watch for change
 -- Used by grab barzil to change gloves after reset
 -- Used by kill farm help
+-- Used by farm run mastery
 
 run(function()
     workspace.ChildAdded:Connect(function(child)
-        if child.Name == localplayer.Name and bool_auto_enter then
+        task.wait(.1)
+
+        if Child.Name == "RunArea" and bool_ready_run then
+            task.wait(1.4)
+
+            localplayer.Character:WaitForChild("HumanoidRootPart").Anchored = true
+
             task.wait(.1)
+
+            run(tp, Child.One.Position.X, Child.One.Position.Y + 10, Child.One.Position.Z)
+
+            task.wait(.9)
+
+            localplayer.Character:WaitForChild("HumanoidRootPart").Anchored = false
+
+            task.wait(2)
+
+            if workspace:FindFirstChild(target_name .. "\'s Labyrinth") then
+                local hitbox = workspace[target_name]:WaitForChild("Skull"):WaitForChild("Hitbox")
+
+                run(tp, hitbox.Position.X, hitbox.Position.Y, hitbox.Position.Z)
+
+                bool_ready_run = false
+            end
+        end
+
+        if child.Name ~= localplayer.Name then return end
+
+        if bool_auto_enter then
             repeat
-                firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
+                firetouchinterest(localplayer.Character:WaitForChild("HumanoidRootPart"), workspace.Lobby.Teleport1, 0)
                 task.wait(.1)
             until localplayer.Character.isInArena.Value
         end
-        if child.Name == localplayer.Name and bool_equip_saved_glove_grab then
+        if bool_equip_saved_glove_grab then
             task.wait(.5)
-            run(equip, grab_glove_save)
+
+            for c = 0, 10, 1 do
+                run(equip, grab_glove_save)
+                task.wait(.1)
+
+                if localplayer.leaderstats.Glove.Value == grab_glove_save then break end
+            end
         end
-        if child.Name == localplayer.Name and bool_help_kill then
-            task.wait(.1)
+        if bool_help_kill then
             repeat
-                firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
+                firetouchinterest(localplayer.Character:WaitForChild("HumanoidRootPart"), workspace.Lobby.Teleport1, 0)
                 task.wait(.1)
             until localplayer.Character.isInArena.Value
 
@@ -363,6 +398,22 @@ run(function()
             task.wait(.4)
 
             localplayer.Reset:FireServer()
+        end
+        if bool_help_run then
+            repeat
+                firetouchinterest(localplayer.Character:WaitForChild("HumanoidRootPart"), workspace.Lobby.Teleport1, 0)
+                task.wait(.1)
+            until localplayer.Character.isInArena.Value
+
+            task.wait(.1)
+
+            run(tp, table.unpack(pos_table.Safespot))
+
+            task.wait(.1)
+
+            rep_storage.Ghostinvisibilityactivated:FireServer() -- Become invisible
+
+            bool_ready_run = true
         end
     end)
 end)
@@ -551,7 +602,7 @@ local grab_barzil = Target:CreateButton({
 
         repeat
             task.wait(.01)
-            firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
+            firetouchinterest(localplayer.Character:WaitForChild("HumanoidRootPart"), workspace.Lobby.Teleport1, 0)
         until localplayer.Character.isInArena.Value
 
         task.wait(.05)
@@ -781,7 +832,7 @@ local help_farm_kill_toggle = Helper:CreateToggle({
 
         if Value and not localplayer.Character.isInArena.Value then
             repeat
-                firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
+                firetouchinterest(localplayer.Character:WaitForChild("HumanoidRootPart"), workspace.Lobby.Teleport1, 0)
                 task.wait(.1)
             until localplayer.Character.isInArena.Value
 
@@ -802,7 +853,7 @@ local reset_bring_dropdown
 
 local bring_location_dropdown = Helper:CreateDropdown({
     Name = "Bring player to location",
-    Options = {"Arena","Lobby","Hitman","Killerfish","Cannon","Slapple"},
+    Options = {"Arena","Lobby","Hitman","Cannon","Slapple"},
     CurrentOption = {},
     MultipleOptions = false,
     Callback = function(Options)
@@ -863,7 +914,7 @@ local bring_location_dropdown = Helper:CreateDropdown({
 
         repeat
             task.wait(.01)
-            firetouchinterest(localplayer.Character.HumanoidRootPart, workspace.Lobby.Teleport1, 0)
+            firetouchinterest(localplayer.Character:WaitForChild("HumanoidRootPart"), workspace.Lobby.Teleport1, 0)
         until localplayer.Character.isInArena.Value
 
         task.wait(.05)
@@ -900,5 +951,48 @@ local bring_location_dropdown = Helper:CreateDropdown({
 function reset_bring_dropdown()
     bring_location_dropdown:Set({"None"})
 end
+
+local help_run_mas_toggle = Helper:CreateToggle({
+    Name = "Help with run mastery",
+    CurrentValue = false,
+    Callback = function(Value)
+        bool_help_run = Value
+
+        if not Value then
+            bool_ready_run = false
+            run(equip, run_glove_save) -- If turned off equip saved glove
+            return
+        end
+
+        local glove_save = localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value
+        run_glove_save = glove_save
+
+        local in_arena = localplayer.Character.isInArena.Value
+
+        if in_arena then
+            notify("Not in lobby", "Help run doesn\'t work in arena")
+            return
+        end
+
+        run(equip, "Ghost")
+
+        task.wait(.05)
+
+        repeat
+            task.wait(.01)
+            firetouchinterest(localplayer.Character:WaitForChild("HumanoidRootPart"), workspace.Lobby.Teleport1, 0)
+        until localplayer.Character.isInArena.Value
+
+        task.wait(.1)
+
+        run(tp, table.unpack(pos_table.Safespot))
+
+        task.wait(.1)
+
+        rep_storage.Ghostinvisibilityactivated:FireServer() -- Become invisible
+
+        bool_ready_run = true
+    end,
+})
 
 Helper:CreateDivider()
