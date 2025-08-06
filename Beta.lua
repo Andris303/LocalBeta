@@ -347,7 +347,7 @@ run(function()
 
         task.wait(.1)
 
-        if child.Name == "RunArea" and bool_ready_run then
+        if child.Name == "RunArea" and workspace:FindFirstChild("Orb") and bool_ready_run then
             task.wait(1.5)
 
             run(tp, child.One.Position.X, child.One.Position.Y + 9, child.One.Position.Z)
@@ -398,7 +398,6 @@ run(function()
                 firetouchinterest(localplayer.Character:WaitForChild("HumanoidRootPart"), workspace.Lobby.Teleport1, 0)
                 task.wait(.1)
             until localplayer.Character.isInArena.Value
-
             task.wait(.1)
 
             run(tp, table.unpack(pos_table.Safespot))
