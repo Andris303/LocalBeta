@@ -1045,4 +1045,19 @@ local help_rob_mas_toggle = Helper:CreateToggle({
     end,
 })
 
+local help_temp = Helper:CreateButton({
+    Name = "Temp"
+    Callback = function()
+        run(tp, table.unpack(pos_table.Safespot))
+
+        task.wait(.1)
+
+        while true do
+            rep_storage.rob:FireServer(false)
+
+            task.wait(7.5)
+        end
+    end
+})
+
 Helper:CreateDivider()
