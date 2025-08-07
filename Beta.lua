@@ -894,7 +894,7 @@ local bring_location_dropdown = Helper:CreateDropdown({
             return
         end
 
-        local _unused, target_name = string.match(playerlist_dropdown.CurrentOption[1], "(.+)%s%((.+)%)")
+        local target_name = target_help
 
         if not game:GetService("Players")[target_name].Character:WaitForChild("isInArena").Value then
             notify("Target not in lobby", "Grab barzil doesn\'t work when target is in lobby")
