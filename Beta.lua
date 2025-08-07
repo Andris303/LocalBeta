@@ -14,6 +14,8 @@ local pos_table = { -- Dictionary of all positions and spots ingame
     Hitman = {17893, -24, -3548},
     Cannon = {264, 34, 199},
     Slapple = {-403, 51, -15},
+    EvilBarzil = {0, 0, 0},
+    Tower = {0, 0, 0},
 }
 
 -- Set hub instance number to break connections
@@ -91,6 +93,8 @@ local function tp(x, y, z)
         root.CFrame = CFrame.new(x, y, z)
     end
 end
+
+if game.PlaceId == 6403373529 then -- check if were in main slap battles
 
 -- Safespot create function
 
@@ -1046,11 +1050,44 @@ local tp_barzil = Places:CreateButton({
     end
 })
 
-local tp_main = Places:CreateButton({
+Places:CreateDivider()
+
+elseif game.PlaceId == 7234087065 -- check if were in barzil
+
+local Main = Window:CreateTab("Main")
+
+Main:CreateDivider()
+
+local tp_evil_barzil = Main:CreateButton({
+    Name = "Teleport to evil barzil portal",
+    Callback = function()
+        run(tp, -66, 3, -161)
+    end
+})
+
+local tp_tower_inside = Main:CreateButton({
+    Name = "Teleport to tower (inside)",
+    Callback = function()
+        run(tp, 250, 94, -447)
+    end
+})
+
+local tp_tower_top = Main:CreateButton({
+    Name = "Teleport to tower (top)",
+    Callback = function()
+        run(tp, 250, 150, -458)
+    end
+})
+
+Main:CreateDivider()
+
+local tp_main = Main:CreateButton({
     Name = "Teleport to main game",
     Callback = function()
         game:GetService("TeleportService"):Teleport(6403373529)
     end
 })
 
-Places:CreateDivider()
+Main:CreateDivider()
+
+end
