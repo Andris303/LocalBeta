@@ -1052,7 +1052,7 @@ local tp_barzil = Places:CreateButton({
 
 Places:CreateDivider()
 
-elseif game.PlaceId == 7234087065 -- check if were in barzil
+elseif game.PlaceId == 7234087065 then -- check if were in barzil
 
 local Main = Window:CreateTab("Main")
 
