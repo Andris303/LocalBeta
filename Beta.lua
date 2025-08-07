@@ -178,13 +178,6 @@ end
 run(function()
     if not localplayer.Character.isInArena.Value or getgenv().BETA_NIE_INSTANCE then
         run(setup_NIE)
-        task.wait(10)
-        if rep_storage:FindFirstChild("Teleport1") then
-            bool_use_clickdetector = true
-            rep_storage.Teleport1.Parent = workspace.Lobby
-            rep_storage.Teleport2.Parent = workspace.Lobby
-            notify("Unexpected NIE failure", "Portals restored, rejoin to use NIE")
-        end
         return
     end
     notify("NIE setup halted", "NIE setup will be halted until you are in the lobby")
@@ -195,13 +188,6 @@ run(function()
             repeat task.wait()
             until localplayer.Character.isInArena.Value == false
             run(setup_NIE)
-            task.wait(10)
-            if rep_storage:FindFirstChild("Teleport1") then
-                bool_use_clickdetector = true
-                rep_storage.Teleport1.Parent = workspace.Lobby
-                rep_storage.Teleport2.Parent = workspace.Lobby
-                notify("Unexpected NIE failure", "Portals restored, rejoin to use NIE")
-            end
             return
         end
     end)
@@ -279,7 +265,7 @@ local reset_TP_dropdown
 
 local TP_dropdown = Misc:CreateDropdown({
     Name = "Teleport",
-    Options = {"Arena","Lobby","Safespot","Hitman","Cannon","Slapple"},
+    Options = {"Safespot","Arena","Lobby","Hitman","Cannon","Slapple"},
     CurrentOption = {},
     MultipleOptions = false,
     Callback = function(Options)
@@ -880,7 +866,7 @@ local reset_bring_dropdown
 
 local bring_location_dropdown = Helper:CreateDropdown({
     Name = "Bring player to location",
-    Options = {"Arena","Lobby","Hitman","Cannon","Slapple"},
+    Options = {"Hitman","Cannon","Slapple","Lobby","Arena"},
     CurrentOption = {},
     MultipleOptions = false,
     Callback = function(Options)
@@ -1042,21 +1028,6 @@ local help_rob_mas_toggle = Helper:CreateToggle({
         run(tp, table.unpack(pos_table.Safespot))
 
         bool_ready_rob = true
-    end,
-})
-
-local help_temp = Helper:CreateButton({
-    Name = "Temp",
-    Callback = function()
-        run(tp, table.unpack(pos_table.Safespot))
-
-        task.wait(.1)
-
-        while true do
-            rep_storage.rob:FireServer(false)
-
-            task.wait(7.5)
-        end
     end,
 })
 
