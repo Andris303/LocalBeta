@@ -321,7 +321,8 @@ local bool_help_kill = false
 local target_help
 local bool_help_run = false
 local bool_ready_run = false
-local run_glove_save
+local bool_help_rob = false
+local bool_ready_rob = false
 
 -- Auto enter arena
 
@@ -401,11 +402,43 @@ run(function()
                 firetouchinterest(localplayer.Character:WaitForChild("HumanoidRootPart"), workspace.Lobby.Teleport1, 0)
                 task.wait(.1)
             until localplayer.Character.isInArena.Value
+
             task.wait(.1)
 
             run(tp, table.unpack(pos_table.Safespot))
 
             bool_ready_run = true
+        end
+        if bool_help_rob then
+            repeat
+                firetouchinterest(localplayer.Character:WaitForChild("HumanoidRootPart"), workspace.Lobby.Teleport1, 0)
+                task.wait(.1)
+            until localplayer.Character.isInArena.Value
+
+            task.wait(.1)
+
+            run(tp, table.unpack(pos_table.Safespot))
+
+            bool_ready_rob = true
+        end
+    end)
+end)
+
+-- Descendant added for workspace because rob mas help is very stupid
+
+run(function()
+    workspace.DescendantAdded:Connect(function(descendant)
+        if current_instance_number ~= getgenv().BETA_INSTANCE_NUMBER then return end
+
+        task.wait(.1)
+
+        if workspace:FindFirstChild(target_help) and descendant.Name == "RobTransformed" then
+            if descendant.Parent == workspace[target_help] and bool_ready_rob then
+                task.wait(2.8)
+
+                local root = workspace[target_help]:WaitForChild("HumanoidRootPart")
+                run(tp, root.Position.X, root.Position.Y, root.Position.Z)
+            end
         end
     end)
 end)
@@ -812,7 +845,9 @@ local select_player_textbox = Helper:CreateInput({
     PlaceholderText = "Eg: BaconHair123",
     RemoveTextAfterFocusLost = false,
     Callback = function(Text)
-        target_help = Text
+        if game:GetService("Players"):FindFirstChild(Text) then
+            target_help = Text
+        end
     end,
 })
 
@@ -952,12 +987,8 @@ local help_run_mas_toggle = Helper:CreateToggle({
 
         if not Value then
             bool_ready_run = false
-            run(equip, run_glove_save) -- If turned off equip saved glove
             return
         end
-
-        local glove_save = localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value
-        run_glove_save = glove_save
 
         local in_arena = localplayer.Character.isInArena.Value
 
@@ -978,6 +1009,39 @@ local help_run_mas_toggle = Helper:CreateToggle({
         run(tp, table.unpack(pos_table.Safespot))
 
         bool_ready_run = true
+    end,
+})
+
+local help_rob_mas_toggle = Helper:CreateToggle({
+    Name = "Help with rob mastery",
+    CurrentValue = false,
+    Callback = function(Value)
+        bool_help_rob = Value
+
+        if not Value then
+            bool_ready_rob = false
+            return
+        end
+
+        local in_arena = localplayer.Character.isInArena.Value
+
+        if in_arena then
+            notify("Not in lobby", "Help rob doesn\'t work in arena")
+            return
+        end
+
+        task.wait(.1)
+
+        repeat
+            task.wait(.01)
+            firetouchinterest(localplayer.Character:WaitForChild("HumanoidRootPart"), workspace.Lobby.Teleport1, 0)
+        until localplayer.Character.isInArena.Value
+
+        task.wait(.1)
+
+        run(tp, table.unpack(pos_table.Safespot))
+
+        bool_ready_rob = true
     end,
 })
 
