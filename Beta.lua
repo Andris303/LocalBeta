@@ -1046,7 +1046,7 @@ local help_rob_mas_toggle = Helper:CreateToggle({
 })
 
 local help_temp = Helper:CreateButton({
-    Name = "Temp"
+    Name = "Temp",
     Callback = function()
         run(tp, table.unpack(pos_table.Safespot))
 
@@ -1057,7 +1057,7 @@ local help_temp = Helper:CreateButton({
 
             task.wait(7.5)
         end
-    end
+    end,
 })
 
 Helper:CreateDivider()
