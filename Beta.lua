@@ -847,9 +847,7 @@ local select_player_textbox = Helper:CreateInput({
     PlaceholderText = "Eg: BaconHair123",
     RemoveTextAfterFocusLost = false,
     Callback = function(Text)
-        if game:GetService("Players"):FindFirstChild(Text) then
-            target_help = Text
-        end
+        target_help = Text
     end,
 })
 
