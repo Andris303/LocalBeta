@@ -232,6 +232,8 @@ local Glove = Window:CreateTab("Glove")
 
 local Helper = Window:CreateTab("Helper")
 
+local Places = Window:CreateTab("Places")
+
 -- Create elements in tabs
 
 -- Misc
@@ -1032,3 +1034,23 @@ local help_rob_mas_toggle = Helper:CreateToggle({
 })
 
 Helper:CreateDivider()
+
+-- Places
+
+Places:CreateDivider()
+
+local tp_barzil = Places:CreateButton({
+    Name = "Teleport to barzil",
+    Callback = function()
+        game:GetService("TeleportService"):Teleport(7234087065)
+    end
+})
+
+local tp_main = Places:CreateButton({
+    Name = "Teleport to main game",
+    Callback = function()
+        game:GetService("TeleportService"):Teleport(6403373529)
+    end
+})
+
+Places:CreateDivider()
