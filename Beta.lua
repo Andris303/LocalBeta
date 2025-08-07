@@ -430,6 +430,8 @@ run(function()
     workspace.DescendantAdded:Connect(function(descendant)
         if current_instance_number ~= getgenv().BETA_INSTANCE_NUMBER then return end
 
+        if target_help == nil then return end
+
         task.wait(.1)
 
         if workspace:FindFirstChild(target_help) and descendant.Name == "RobTransformed" then
