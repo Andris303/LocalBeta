@@ -886,6 +886,8 @@ local bring_location_dropdown = Helper:CreateDropdown({
     Callback = function(Options)
         if Options[1] == "None" then return end
 
+        run(reset_bring_dropdown)
+
         local glove_save = localplayer:WaitForChild("leaderstats"):WaitForChild("Glove").Value
         local in_arena = localplayer.Character.isInArena.Value
 
@@ -968,8 +970,6 @@ local bring_location_dropdown = Helper:CreateDropdown({
 
         bool_equip_saved_glove_grab = false
         grab_glove_save = nil
-
-        run(reset_bring_dropdown)
     end,
 })
 
