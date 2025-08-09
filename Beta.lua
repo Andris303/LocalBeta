@@ -342,7 +342,7 @@ run(function()
         task.wait(.1)
 
         if child.Name = "Imp" and bool_secret then
-            rep_storage.FlashHit:FireServer(inst:WaitForChild("Body"))
+            rep_storage.FlashHit:FireServer(child:WaitForChild("Body"))
         end
 
         if child.Name == "RunArea" and workspace:FindFirstChild("Orb") and bool_ready_run then
