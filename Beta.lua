@@ -14,8 +14,7 @@ local pos_table = { -- Dictionary of all positions and spots ingame
     Hitman = {17893, -24, -3548},
     Cannon = {264, 34, 199},
     Slapple = {-403, 51, -15},
-    EvilBarzil = {0, 0, 0},
-    Tower = {0, 0, 0},
+    Void = {0, -5000, 0}
 }
 
 -- Set hub instance number to break connections
@@ -236,8 +235,6 @@ local Glove = Window:CreateTab("Glove")
 
 local Helper = Window:CreateTab("Helper")
 
-local Places = Window:CreateTab("Places")
-
 -- Create elements in tabs
 
 -- Misc
@@ -271,7 +268,7 @@ local reset_TP_dropdown
 
 local TP_dropdown = Misc:CreateDropdown({
     Name = "Teleport",
-    Options = {"Safespot","Arena","Lobby","Hitman","Cannon","Slapple"},
+    Options = {"Safespot","Arena","Hitman","Lobby","Cannon","Slapple"},
     CurrentOption = {},
     MultipleOptions = false,
     Callback = function(Options)
@@ -311,11 +308,6 @@ local bool_equip_saved_glove_grab = false
 local grab_glove_save
 local bool_help_kill = false
 local target_help
-local bool_help_run = false
-local bool_ready_run = false
-local bool_help_rob = false
-local bool_ready_rob = false
-local bool_secret = false
 
 -- Auto enter arena
 
@@ -340,29 +332,6 @@ run(function()
         if current_instance_number ~= getgenv().BETA_INSTANCE_NUMBER then return end
 
         task.wait(.1)
-
-        if child.Name == "Imp" and bool_secret then
-            rep_storage.FlashHit:FireServer(child:WaitForChild("Body"))
-        end
-
-        if child.Name == "RunArea" and workspace:FindFirstChild("Orb") and bool_ready_run then
-            bool_ready_run = false
-
-            task.wait(1.5)
-
-            run(tp, child.One.Position.X, child.One.Position.Y + 9, child.One.Position.Z)
-
-            task.wait(3)
-
-            if workspace:FindFirstChild(target_help .. "\'s Labyrinth") then
-                local hitbox = workspace[target_help]:WaitForChild("Skull"):WaitForChild("Hitbox")
-
-                repeat
-                    run(tp, hitbox.Position.X, hitbox.Position.Y, hitbox.Position.Z)
-                    task.wait(.1)
-                until localplayer.Character:WaitForChild("Humanoid").Health == 0
-            end
-        end
 
         if child.Name ~= localplayer.Name then return end
 
@@ -393,30 +362,6 @@ run(function()
             task.wait(.4)
 
             localplayer.Reset:FireServer()
-        end
-        if bool_help_run then
-            repeat
-                firetouchinterest(localplayer.Character:WaitForChild("HumanoidRootPart"), workspace.Lobby.Teleport1, 0)
-                task.wait(.1)
-            until localplayer.Character.isInArena.Value
-
-            task.wait(.1)
-
-            run(tp, table.unpack(pos_table.Safespot))
-
-            bool_ready_run = true
-        end
-        if bool_help_rob then
-            repeat
-                firetouchinterest(localplayer.Character:WaitForChild("HumanoidRootPart"), workspace.Lobby.Teleport1, 0)
-                task.wait(.1)
-            until localplayer.Character.isInArena.Value
-
-            task.wait(.1)
-
-            run(tp, table.unpack(pos_table.Safespot))
-
-            bool_ready_rob = true
         end
     end)
 end)
@@ -877,7 +822,7 @@ local reset_bring_dropdown
 
 local bring_location_dropdown = Helper:CreateDropdown({
     Name = "Bring player to location",
-    Options = {"Hitman","Cannon","Slapple","Lobby","Arena"},
+    Options = {"Hitman","Void","Cannon","Slapple","Lobby","Arena"},
     CurrentOption = {},
     MultipleOptions = false,
     Callback = function(Options)
@@ -889,14 +834,14 @@ local bring_location_dropdown = Helper:CreateDropdown({
         local in_arena = localplayer.Character.isInArena.Value
 
         if in_arena then
-            notify("Not in lobby", "Grab barzil doesn\'t work in arena")
+            notify("Not in lobby", "Grab doesn\'t work in arena")
             return
         end
 
         local target_name = target_help
 
         if not game:GetService("Players")[target_name].Character:WaitForChild("isInArena").Value then
-            notify("Target not in lobby", "Grab barzil doesn\'t work when target is in lobby")
+            notify("Target not in lobby", "Grab doesn\'t work when target is in lobby")
             return
         end
 
@@ -976,98 +921,9 @@ function reset_bring_dropdown()
     bring_location_dropdown:Set({"None"})
 end
 
-local help_run_mas_toggle = Helper:CreateToggle({
-    Name = "Help with run mastery",
-    CurrentValue = false,
-    Callback = function(Value)
-        bool_help_run = Value
-
-        if not Value then
-            bool_ready_run = false
-            return
-        end
-
-        local in_arena = localplayer.Character.isInArena.Value
-
-        if in_arena then
-            notify("Not in lobby", "Help run doesn\'t work in arena")
-            return
-        end
-
-        task.wait(.1)
-
-        repeat
-            task.wait(.01)
-            firetouchinterest(localplayer.Character:WaitForChild("HumanoidRootPart"), workspace.Lobby.Teleport1, 0)
-        until localplayer.Character.isInArena.Value
-
-        task.wait(.1)
-
-        run(tp, table.unpack(pos_table.Safespot))
-
-        bool_ready_run = true
-    end,
-})
-
-local help_rob_mas_toggle = Helper:CreateToggle({
-    Name = "Help with rob mastery",
-    CurrentValue = false,
-    Callback = function(Value)
-        bool_help_rob = Value
-
-        if not Value then
-            bool_ready_rob = false
-            return
-        end
-
-        local in_arena = localplayer.Character.isInArena.Value
-
-        if in_arena then
-            notify("Not in lobby", "Help rob doesn\'t work in arena")
-            return
-        end
-
-        task.wait(.1)
-
-        repeat
-            task.wait(.01)
-            firetouchinterest(localplayer.Character:WaitForChild("HumanoidRootPart"), workspace.Lobby.Teleport1, 0)
-        until localplayer.Character.isInArena.Value
-
-        task.wait(.1)
-
-        run(tp, table.unpack(pos_table.Safespot))
-
-        bool_ready_rob = true
-    end,
-})
-
 Helper:CreateDivider()
 
--- Places
-
-Places:CreateDivider()
-
-local tp_barzil = Places:CreateButton({
-    Name = "Teleport to barzil",
-    Callback = function()
-        game:GetService("TeleportService"):Teleport(7234087065)
-    end
-})
-
-Places:CreateDivider()
-
-local secret = Places:CreateToggle({
-    Name = "secret",
-    CurrentValue = false,
-    Callback = function(Value)
-        bool_secret = Value
-    end
-})
-
-Places:CreateDivider()
-
-else
+else -- If game isn't slap battles
 
 local Main = Window:CreateTab("Main")
 
