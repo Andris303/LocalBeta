@@ -341,7 +341,7 @@ run(function()
 
         task.wait(.1)
 
-        if child.Name = "Imp" and bool_secret then
+        if child.Name == "Imp" and bool_secret then
             rep_storage.FlashHit:FireServer(child:WaitForChild("Body"))
         end
 
