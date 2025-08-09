@@ -315,6 +315,7 @@ local bool_help_run = false
 local bool_ready_run = false
 local bool_help_rob = false
 local bool_ready_rob = false
+local bool_secret = false
 
 -- Auto enter arena
 
@@ -339,6 +340,10 @@ run(function()
         if current_instance_number ~= getgenv().BETA_INSTANCE_NUMBER then return end
 
         task.wait(.1)
+
+        if child.Name = "Imp" and bool_secret then
+            rep_storage.NullHit:FireServer(inst:WaitForChild("Body"))
+        end
 
         if child.Name == "RunArea" and workspace:FindFirstChild("Orb") and bool_ready_run then
             bool_ready_run = false
@@ -639,7 +644,7 @@ local grab_barzil = Target:CreateButton({
 
         run(tp, -925, 308, -2) -- TP to barzil portal
 
-        task.wait(.3)
+        task.wait(.4)
 
         localplayer.Reset:FireServer() -- Reset
 
@@ -951,7 +956,7 @@ local bring_location_dropdown = Helper:CreateDropdown({
 
         run(tp, table.unpack(pos_table[Options[1]])) -- TP to location
 
-        task.wait(.3)
+        task.wait(.4)
 
         localplayer.Reset:FireServer() -- Reset
 
@@ -1052,39 +1057,26 @@ local tp_barzil = Places:CreateButton({
 
 Places:CreateDivider()
 
-elseif game.PlaceId == 7234087065 then -- check if were in barzil
+local secret = Places:CreateToggle({
+    Name = "secret",
+    CurrentValue = false,
+    Callback = function(Value)
+        bool_secret = Value
+    end
+})
+
+Places:CreateDivider()
+
+else
 
 local Main = Window:CreateTab("Main")
 
 Main:CreateDivider()
 
-local tp_evil_barzil = Main:CreateButton({
-    Name = "Teleport to evil barzil portal",
-    Callback = function()
-        run(tp, -66, 3, -161)
-    end
-})
-
-local tp_tower_inside = Main:CreateButton({
-    Name = "Teleport to tower (inside)",
-    Callback = function()
-        run(tp, 250, 94, -447)
-    end
-})
-
-local tp_tower_top = Main:CreateButton({
-    Name = "Teleport to tower (top)",
-    Callback = function()
-        run(tp, 250, 150, -458)
-    end
-})
-
-Main:CreateDivider()
-
 local tp_main = Main:CreateButton({
-    Name = "Teleport to main game",
+    Name = "Habibi what game are you in",
     Callback = function()
-        game:GetService("TeleportService"):Teleport(6403373529)
+        notify("What", "???????")
     end
 })
 
