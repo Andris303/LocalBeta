@@ -14,7 +14,7 @@ local pos_table = { -- Dictionary of all positions and spots ingame
     Hitman = {17893, -24, -3548},
     Cannon = {264, 34, 199},
     Slapple = {-403, 51, -15},
-    Void = {0, -5000, 0}
+    Void = {0, -49999, 0}
 }
 
 -- Set hub instance number to break connections
